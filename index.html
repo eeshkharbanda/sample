@@ -15,332 +15,195 @@
       color: #f0ede4;
     }
 
-    .header {
-      text-align: center;
-      padding: 36px 16px 28px;
-    }
+    .header { text-align: center; padding: 36px 16px 28px; }
 
     .logo-circle {
-      width: 72px;
-      height: 72px;
+      width: 72px; height: 72px;
       background: linear-gradient(135deg, #f5c842, #e8952a);
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-      font-size: 32px;
-      box-shadow: 0 0 32px rgba(245, 200, 66, 0.45);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px; font-size: 32px;
+      box-shadow: 0 0 32px rgba(245,200,66,0.45);
     }
 
     h1 {
-      font-size: 28px;
-      font-weight: 700;
+      font-size: 28px; font-weight: 700;
       background: linear-gradient(135deg, #f5c842, #f0ede4);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       letter-spacing: 0.5px;
     }
 
-    .tagline {
-      margin-top: 8px;
-      font-size: 14px;
-      color: #b8b0d0;
-      letter-spacing: 0.3px;
-    }
+    .tagline { margin-top: 8px; font-size: 14px; color: #b8b0d0; letter-spacing: 0.3px; }
 
     .divider {
-      width: 48px;
-      height: 2px;
+      width: 48px; height: 2px;
       background: linear-gradient(90deg, #f5c842, #e8952a);
-      margin: 20px auto 0;
-      border-radius: 2px;
+      margin: 20px auto 0; border-radius: 2px;
     }
 
     .intro-card {
       background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(245, 200, 66, 0.2);
-      border-radius: 16px;
-      padding: 18px 20px;
-      margin-bottom: 24px;
-      font-size: 14px;
-      line-height: 1.7;
-      color: #c8c0e0;
+      border: 1px solid rgba(245,200,66,0.2);
+      border-radius: 16px; padding: 18px 20px; margin-bottom: 24px;
+      font-size: 14px; line-height: 1.7; color: #c8c0e0;
     }
-
-    .intro-card strong {
-      color: #f5c842;
-    }
+    .intro-card strong { color: #f5c842; }
 
     .card {
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 24px 20px;
-      margin-bottom: 20px;
-      backdrop-filter: blur(8px);
-      transition: border-color 0.3s;
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 20px;
+      backdrop-filter: blur(8px); transition: border-color 0.3s;
     }
-
-    .card:focus-within {
-      border-color: rgba(245, 200, 66, 0.5);
-    }
+    .card:focus-within { border-color: rgba(245,200,66,0.5); }
 
     .q-number {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      color: #f5c842;
-      text-transform: uppercase;
-      margin-bottom: 10px;
+      font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+      color: #f5c842; text-transform: uppercase; margin-bottom: 10px;
     }
 
-    .q-text {
-      font-size: 16px;
-      font-weight: 600;
-      line-height: 1.5;
-      color: #f0ede4;
-      margin-bottom: 16px;
-    }
+    .q-text { font-size: 16px; font-weight: 600; line-height: 1.5; color: #f0ede4; margin-bottom: 16px; }
 
     textarea {
-      width: 100%;
-      min-height: 120px;
+      width: 100%; min-height: 120px;
       background: rgba(0,0,0,0.25);
       border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 15px;
-      color: #f0ede4;
-      resize: vertical;
-      outline: none;
-      font-family: inherit;
-      line-height: 1.6;
-      transition: border-color 0.2s, background 0.2s;
+      border-radius: 12px; padding: 14px;
+      font-size: 15px; color: #f0ede4; resize: vertical; outline: none;
+      font-family: inherit; line-height: 1.6; transition: border-color 0.2s, background 0.2s;
     }
-
     textarea::placeholder { color: #6e6a88; }
+    textarea:focus { border-color: rgba(245,200,66,0.55); background: rgba(0,0,0,0.35); }
 
-    textarea:focus {
-      border-color: rgba(245, 200, 66, 0.55);
-      background: rgba(0,0,0,0.35);
-    }
-
-    /* Voice recorder */
+    /* Voice section */
     .voice-section {
-      margin-top: 14px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding-top: 14px;
+      margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;
     }
 
     .voice-label {
-      font-size: 12px;
-      color: #9090b8;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      font-size: 12px; color: #9090b8; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
     }
-
     .voice-label svg { flex-shrink: 0; }
 
-    .voice-controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+    .voice-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
     .btn-record {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 10px 18px;
-      border-radius: 50px;
-      border: none;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.25s;
+      display: flex; align-items: center; gap: 7px;
+      padding: 10px 18px; border-radius: 50px; border: none;
+      font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.25s;
       background: linear-gradient(135deg, #f5c842, #e8952a);
-      color: #1a1a2e;
-      box-shadow: 0 4px 15px rgba(245,200,66,0.25);
+      color: #1a1a2e; box-shadow: 0 4px 15px rgba(245,200,66,0.25);
     }
-
     .btn-record:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(245,200,66,0.35); }
     .btn-record:active { transform: translateY(0); }
-
     .btn-record.recording {
-      background: linear-gradient(135deg, #e84040, #c0392b);
-      color: #fff;
+      background: linear-gradient(135deg, #e84040, #c0392b); color: #fff;
       box-shadow: 0 4px 15px rgba(232,64,64,0.35);
       animation: pulse 1.5s ease-in-out infinite;
     }
 
     @keyframes pulse {
-      0%, 100% { box-shadow: 0 4px 15px rgba(232,64,64,0.35); }
+      0%,100% { box-shadow: 0 4px 15px rgba(232,64,64,0.35); }
       50% { box-shadow: 0 4px 28px rgba(232,64,64,0.6); }
     }
 
     .btn-stop {
-      display: none;
-      align-items: center;
-      gap: 7px;
-      padding: 10px 18px;
-      border-radius: 50px;
-      border: none;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      background: rgba(232,64,64,0.18);
-      color: #ff7070;
-      border: 1px solid rgba(232,64,64,0.35);
-      transition: all 0.2s;
+      display: none; align-items: center; gap: 7px;
+      padding: 10px 18px; border-radius: 50px; border: none;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      background: rgba(232,64,64,0.18); color: #ff7070;
+      border: 1px solid rgba(232,64,64,0.35); transition: all 0.2s;
     }
-
     .btn-stop.visible { display: flex; }
 
     .timer {
-      font-size: 13px;
-      color: #ff9090;
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-      display: none;
+      font-size: 13px; color: #ff9090; font-weight: 600;
+      font-variant-numeric: tabular-nums; display: none;
     }
-
     .timer.visible { display: block; }
 
-    .audio-player {
-      display: none;
-      width: 100%;
-      margin-top: 12px;
-      border-radius: 10px;
-      outline: none;
-    }
-
+    .audio-player { display: none; width: 100%; margin-top: 12px; border-radius: 10px; outline: none; }
     .audio-player.visible { display: block; }
-
     audio::-webkit-media-controls-panel { background: rgba(30,20,60,0.95); }
 
-    .audio-note {
-      font-size: 11px;
-      color: #7070a0;
-      margin-top: 8px;
-      display: none;
+    .audio-status {
+      display: none; font-size: 12px; margin-top: 8px;
+      padding: 8px 12px; border-radius: 8px;
+      background: rgba(80,200,80,0.1); border: 1px solid rgba(80,200,80,0.25);
+      color: #80e080;
     }
+    .audio-status.visible { display: block; }
 
-    .audio-note.visible { display: block; }
-
-    /* Submit */
+    /* Name section */
     .name-section {
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 24px 20px;
-      margin-bottom: 28px;
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 28px;
     }
-
     .name-section label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      color: #c8c0e0;
-      margin-bottom: 10px;
+      display: block; font-size: 14px; font-weight: 600; color: #c8c0e0; margin-bottom: 10px;
     }
 
     input[type="text"] {
-      width: 100%;
-      background: rgba(0,0,0,0.25);
+      width: 100%; background: rgba(0,0,0,0.25);
       border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 15px;
-      color: #f0ede4;
-      outline: none;
-      font-family: inherit;
-      transition: border-color 0.2s;
+      border-radius: 12px; padding: 14px; font-size: 15px; color: #f0ede4;
+      outline: none; font-family: inherit; transition: border-color 0.2s;
     }
-
     input[type="text"]::placeholder { color: #6e6a88; }
-    input[type="text"]:focus { border-color: rgba(245, 200, 66, 0.55); }
+    input[type="text"]:focus { border-color: rgba(245,200,66,0.55); }
 
     .btn-submit {
-      width: 100%;
-      padding: 18px;
-      border-radius: 16px;
-      border: none;
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
-      background: linear-gradient(135deg, #f5c842, #e8952a);
-      color: #1a1a2e;
-      box-shadow: 0 6px 28px rgba(245,200,66,0.35);
-      transition: all 0.25s;
-      letter-spacing: 0.3px;
+      width: 100%; padding: 18px; border-radius: 16px; border: none;
+      font-size: 17px; font-weight: 700; cursor: pointer;
+      background: linear-gradient(135deg, #f5c842, #e8952a); color: #1a1a2e;
+      box-shadow: 0 6px 28px rgba(245,200,66,0.35); transition: all 0.25s; letter-spacing: 0.3px;
     }
-
     .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(245,200,66,0.45); }
     .btn-submit:active { transform: translateY(0); }
     .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-    .footer-note {
-      text-align: center;
-      font-size: 12px;
-      color: #6060a0;
-      margin-top: 24px;
-      line-height: 1.7;
-    }
+    .footer-note { text-align: center; font-size: 12px; color: #6060a0; margin-top: 24px; line-height: 1.7; }
 
     /* Success screen */
-    .success-screen {
-      display: none;
-      text-align: center;
-      padding: 60px 24px;
-    }
-
+    .success-screen { display: none; text-align: center; padding: 60px 24px; }
     .success-screen.visible { display: block; }
 
     .success-icon {
-      font-size: 72px;
-      margin-bottom: 24px;
-      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      font-size: 72px; margin-bottom: 24px;
+      animation: popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
     }
-
-    @keyframes popIn {
-      from { transform: scale(0); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
+    @keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
 
     .success-screen h2 {
-      font-size: 26px;
-      font-weight: 700;
+      font-size: 26px; font-weight: 700;
       background: linear-gradient(135deg, #f5c842, #f0ede4);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       margin-bottom: 14px;
     }
-
-    .success-screen p {
-      font-size: 15px;
-      color: #b8b0d0;
-      line-height: 1.7;
-    }
+    .success-screen p { font-size: 15px; color: #b8b0d0; line-height: 1.7; }
 
     .form-wrap { display: block; }
     .form-wrap.hidden { display: none; }
 
-    /* Mic dot animation */
     .rec-dot {
-      width: 8px;
-      height: 8px;
-      background: #fff;
-      border-radius: 50%;
+      width: 8px; height: 8px; background: #fff; border-radius: 50%;
       animation: blink 1s ease-in-out infinite;
     }
-
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* Progress bar */
+    .upload-bar-wrap {
+      display: none; margin-top: 12px;
+      background: rgba(255,255,255,0.08); border-radius: 6px; height: 6px; overflow: hidden;
+    }
+    .upload-bar-wrap.visible { display: block; }
+    .upload-bar {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, #f5c842, #e8952a);
+      border-radius: 6px; transition: width 0.3s;
+    }
   </style>
 </head>
 <body>
@@ -363,37 +226,28 @@
 
     <div class="intro-card">
       <strong>Dear Satyug Practitioner,</strong><br/>
-      Your story matters. Please answer the 3 questions below honestly — your experience can be a light for someone else's journey. You can <strong>type your answer</strong> or use the <strong>voice note</strong> option.
+      Your story matters. Please answer the 3 questions below honestly — your experience can be a light for someone else's journey. You can <strong>type your answer</strong> or record a <strong>voice note</strong> (or both).
     </div>
 
-    <form id="satyugForm" action="https://formsubmit.co/eeshkharbanda@gmail.com" method="POST">
-
-      <!-- Hidden fields for FormSubmit -->
-      <input type="hidden" name="_subject" value="New Satyug Feedback Response" />
-      <input type="hidden" name="_captcha" value="false" />
-      <input type="hidden" name="_template" value="table" />
+    <form id="satyugForm">
 
       <!-- Question 1 -->
       <div class="card">
         <div class="q-number">Question 1 of 3</div>
         <div class="q-text">Before joining Satyug, what was the biggest struggle, fear, or challenge you were facing in your life?</div>
-        <textarea name="Q1 — Biggest Struggle Before Satyug" placeholder="Share openly… this is a safe space." rows="5" required></textarea>
+        <textarea id="text1" name="Q1 — Biggest Struggle Before Satyug" placeholder="Share openly… this is a safe space." rows="5"></textarea>
         <div class="voice-section">
           <div class="voice-label">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9090b8" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-            Prefer to speak? Record a voice note
+            Or record a voice note — it will be sent with your response
           </div>
           <div class="voice-controls">
-            <button type="button" class="btn-record" onclick="startRecording(this, 1)">
-              🎙️ Start Recording
-            </button>
-            <button type="button" class="btn-stop" onclick="stopRecording(1)">
-              <div class="rec-dot"></div> Stop
-            </button>
+            <button type="button" class="btn-record" onclick="startRecording(this, 1)">🎙️ Start Recording</button>
+            <button type="button" class="btn-stop" onclick="stopRecording(1)"><div class="rec-dot"></div> Stop</button>
             <span class="timer" id="timer1">0:00</span>
           </div>
           <audio class="audio-player" id="audio1" controls></audio>
-          <p class="audio-note" id="audioNote1">Voice note recorded ✓ — Listen above, then type your key points in the box.</p>
+          <div class="audio-status" id="audioStatus1">🎵 Voice note ready — will be sent with your submission</div>
         </div>
       </div>
 
@@ -401,23 +255,19 @@
       <div class="card">
         <div class="q-number">Question 2 of 3</div>
         <div class="q-text">How was that struggle affecting your happiness, relationships, health, work, or daily life?</div>
-        <textarea name="Q2 — How the Struggle Affected Life" placeholder="Describe how it impacted your day-to-day life…" rows="5" required></textarea>
+        <textarea id="text2" name="Q2 — How the Struggle Affected Life" placeholder="Describe how it impacted your day-to-day life…" rows="5"></textarea>
         <div class="voice-section">
           <div class="voice-label">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9090b8" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-            Prefer to speak? Record a voice note
+            Or record a voice note — it will be sent with your response
           </div>
           <div class="voice-controls">
-            <button type="button" class="btn-record" onclick="startRecording(this, 2)">
-              🎙️ Start Recording
-            </button>
-            <button type="button" class="btn-stop" onclick="stopRecording(2)">
-              <div class="rec-dot"></div> Stop
-            </button>
+            <button type="button" class="btn-record" onclick="startRecording(this, 2)">🎙️ Start Recording</button>
+            <button type="button" class="btn-stop" onclick="stopRecording(2)"><div class="rec-dot"></div> Stop</button>
             <span class="timer" id="timer2">0:00</span>
           </div>
           <audio class="audio-player" id="audio2" controls></audio>
-          <p class="audio-note" id="audioNote2">Voice note recorded ✓ — Listen above, then type your key points in the box.</p>
+          <div class="audio-status" id="audioStatus2">🎵 Voice note ready — will be sent with your submission</div>
         </div>
       </div>
 
@@ -425,36 +275,31 @@
       <div class="card">
         <div class="q-number">Question 3 of 3</div>
         <div class="q-text">What has changed for you after practicing Satyug, and what is the biggest benefit you've experienced?</div>
-        <textarea name="Q3 — Changes After Satyug" placeholder="Share your transformation and biggest win…" rows="5" required></textarea>
+        <textarea id="text3" name="Q3 — Changes After Satyug" placeholder="Share your transformation and biggest win…" rows="5"></textarea>
         <div class="voice-section">
           <div class="voice-label">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9090b8" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-            Prefer to speak? Record a voice note
+            Or record a voice note — it will be sent with your response
           </div>
           <div class="voice-controls">
-            <button type="button" class="btn-record" onclick="startRecording(this, 3)">
-              🎙️ Start Recording
-            </button>
-            <button type="button" class="btn-stop" onclick="stopRecording(3)">
-              <div class="rec-dot"></div> Stop
-            </button>
+            <button type="button" class="btn-record" onclick="startRecording(this, 3)">🎙️ Start Recording</button>
+            <button type="button" class="btn-stop" onclick="stopRecording(3)"><div class="rec-dot"></div> Stop</button>
             <span class="timer" id="timer3">0:00</span>
           </div>
           <audio class="audio-player" id="audio3" controls></audio>
-          <p class="audio-note" id="audioNote3">Voice note recorded ✓ — Listen above, then type your key points in the box.</p>
+          <div class="audio-status" id="audioStatus3">🎵 Voice note ready — will be sent with your submission</div>
         </div>
       </div>
 
-      <!-- Name (optional) -->
+      <!-- Name -->
       <div class="name-section">
-        <label for="nameField">Your Name <span style="color:#6060a0; font-weight:400;">(optional — leave blank to stay anonymous)</span></label>
-        <input type="text" id="nameField" name="Participant Name" placeholder="e.g. Priya, Rahul…" />
+        <label for="nameField">Your Name <span style="color:#6060a0;font-weight:400;">(optional — leave blank to stay anonymous)</span></label>
+        <input type="text" id="nameField" placeholder="e.g. Priya, Rahul…" />
       </div>
 
-      <button type="submit" class="btn-submit" id="submitBtn">
-        Submit My Story 🙏
-      </button>
+      <div class="upload-bar-wrap" id="uploadBarWrap"><div class="upload-bar" id="uploadBar"></div></div>
 
+      <button type="submit" class="btn-submit" id="submitBtn">Submit My Story 🙏</button>
     </form>
 
     <p class="footer-note">
@@ -465,15 +310,13 @@
   </div>
 
   <script>
-    const recorders = {};
-    const chunks = {};
-    const timers = {};
+    const recorders = {}, chunks = {}, timers = {}, audioBlobs = {};
 
     function formatTime(s) {
       return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
     }
 
-    async function startRecording(btn, qNum) {
+    async function startRecording(btn, q) {
       if (!navigator.mediaDevices || !window.MediaRecorder) {
         alert('Voice recording is not supported on this browser. Please type your answer instead.');
         return;
@@ -481,75 +324,117 @@
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         const recorder = new MediaRecorder(stream);
-        recorders[qNum] = recorder;
-        chunks[qNum] = [];
+        recorders[q] = recorder;
+        chunks[q] = [];
 
-        recorder.ondataavailable = e => chunks[qNum].push(e.data);
+        recorder.ondataavailable = e => chunks[q].push(e.data);
         recorder.onstop = () => {
-          const blob = new Blob(chunks[qNum], { type: 'audio/webm' });
+          const blob = new Blob(chunks[q], { type: 'audio/webm' });
+          audioBlobs[q] = blob;
           const url = URL.createObjectURL(blob);
-          const audio = document.getElementById('audio' + qNum);
+          const audio = document.getElementById('audio' + q);
           audio.src = url;
           audio.classList.add('visible');
-          document.getElementById('audioNote' + qNum).classList.add('visible');
+          document.getElementById('audioStatus' + q).classList.add('visible');
           stream.getTracks().forEach(t => t.stop());
-          clearInterval(timers[qNum]);
+          clearInterval(timers[q]);
         };
 
         recorder.start();
         btn.classList.add('recording');
-        btn.textContent = '🔴 Recording…';
+        btn.innerHTML = '🔴 Recording…';
 
-        const stopBtn = btn.nextElementSibling;
-        stopBtn.classList.add('visible');
-
-        const timerEl = document.getElementById('timer' + qNum);
+        btn.nextElementSibling.classList.add('visible');
+        const timerEl = document.getElementById('timer' + q);
         timerEl.classList.add('visible');
         let secs = 0;
         timerEl.textContent = formatTime(secs);
-        timers[qNum] = setInterval(() => {
+        timers[q] = setInterval(() => {
           secs++;
           timerEl.textContent = formatTime(secs);
-          if (secs >= 180) stopRecording(qNum); // auto-stop at 3 min
+          if (secs >= 120) stopRecording(q);
         }, 1000);
 
       } catch (err) {
-        alert('Microphone access denied. Please allow microphone permission and try again.');
+        alert('Microphone access denied. Please allow microphone and try again.');
       }
     }
 
-    function stopRecording(qNum) {
-      const recorder = recorders[qNum];
-      if (recorder && recorder.state !== 'inactive') {
-        recorder.stop();
-      }
-      clearInterval(timers[qNum]);
-
-      // Reset button UI
-      const card = document.getElementById('audio' + qNum).closest('.card');
+    function stopRecording(q) {
+      if (recorders[q] && recorders[q].state !== 'inactive') recorders[q].stop();
+      clearInterval(timers[q]);
+      const card = document.getElementById('audio' + q).closest('.card');
       const btn = card.querySelector('.btn-record');
       btn.classList.remove('recording');
-      btn.textContent = '🎙️ Re-record';
-
-      const stopBtn = card.querySelector('.btn-stop');
-      stopBtn.classList.remove('visible');
-
-      const timerEl = document.getElementById('timer' + qNum);
-      timerEl.classList.remove('visible');
+      btn.innerHTML = '🎙️ Re-record';
+      card.querySelector('.btn-stop').classList.remove('visible');
+      document.getElementById('timer' + q).classList.remove('visible');
     }
 
-    // Handle form submit
-    document.getElementById('satyugForm').addEventListener('submit', function(e) {
+    function animateBar(pct) {
+      document.getElementById('uploadBar').style.width = pct + '%';
+    }
+
+    document.getElementById('satyugForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const q1 = document.getElementById('text1').value.trim();
+      const q2 = document.getElementById('text2').value.trim();
+      const q3 = document.getElementById('text3').value.trim();
+
+      if (!q1 && !audioBlobs[1]) { alert('Please answer Question 1 (type or record a voice note).'); return; }
+      if (!q2 && !audioBlobs[2]) { alert('Please answer Question 2 (type or record a voice note).'); return; }
+      if (!q3 && !audioBlobs[3]) { alert('Please answer Question 3 (type or record a voice note).'); return; }
+
       const btn = document.getElementById('submitBtn');
       btn.disabled = true;
-      btn.textContent = 'Submitting…';
+      btn.textContent = 'Sending…';
 
-      // Show success after FormSubmit redirect (fallback)
-      setTimeout(() => {
-        document.getElementById('formWrap').classList.add('hidden');
-        document.getElementById('successScreen').classList.add('visible');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 3500);
+      document.getElementById('uploadBarWrap').classList.add('visible');
+      animateBar(20);
+
+      const fd = new FormData();
+      fd.append('_subject', 'New Satyug Feedback Response');
+      fd.append('_captcha', 'false');
+      fd.append('_template', 'table');
+
+      const name = document.getElementById('nameField').value.trim() || 'Anonymous';
+      fd.append('Participant Name', name);
+      fd.append('Q1 — Biggest Struggle Before Satyug', q1 || '(voice note only)');
+      fd.append('Q2 — How the Struggle Affected Life',  q2 || '(voice note only)');
+      fd.append('Q3 — Changes After Satyug',            q3 || '(voice note only)');
+
+      if (audioBlobs[1]) fd.append('Voice Note - Q1', audioBlobs[1], 'voice-q1.webm');
+      if (audioBlobs[2]) fd.append('Voice Note - Q2', audioBlobs[2], 'voice-q2.webm');
+      if (audioBlobs[3]) fd.append('Voice Note - Q3', audioBlobs[3], 'voice-q3.webm');
+
+      animateBar(60);
+
+      try {
+        const res = await fetch('https://formsubmit.co/ajax/eeshkharbanda@gmail.com', {
+          method: 'POST',
+          body: fd,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        animateBar(100);
+
+        if (res.ok) {
+          setTimeout(() => {
+            document.getElementById('formWrap').classList.add('hidden');
+            document.getElementById('successScreen').classList.add('visible');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, 400);
+        } else {
+          throw new Error('Server error');
+        }
+      } catch (err) {
+        animateBar(0);
+        document.getElementById('uploadBarWrap').classList.remove('visible');
+        btn.disabled = false;
+        btn.textContent = 'Submit My Story 🙏';
+        alert('Submission failed. Please check your internet connection and try again.');
+      }
     });
   </script>
 
