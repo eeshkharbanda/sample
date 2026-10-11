@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Poly Bag Size Calculator</title>
+<meta name="description" content="Find the right courier poly bag for any product size, see it drawn to scale, and save your products.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  /* Layout: a packing-bench tool. Inputs + result on the left, the to-scale bag on the right, saved products below. */
+  :root {
+    --bg: #eef1f5; --card: #ffffff; --ink: #18202e; --muted: #5d6779; --line: #d9dfe8; --field: #f5f7fa;
+    --accent: #1f4fd1; --accent-ink: #ffffff; --accent-soft: #e6edfc;
+    --bag: #cfe0fb; --bag-edge: #4f7fe0; --flap: #a7c4f5; --product: #f1b65d; --product-edge: #b8741a;
+    --ok: #157a3c; --ok-soft: #e4f4ea; --warn: #a44f06; --warn-bg: #fdf1df; --bad: #b4231f; --bad-bg: #fbe6e5;
+    --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11151c; --card: #1a2029; --ink: #e6ebf3; --muted: #9aa5b8; --line: #2c3442; --field: #141921;
+      --accent: #7ea2ff; --accent-ink: #0d1424; --accent-soft: #1f2a45;
+      --bag: #22365a; --bag-edge: #5e8ef0; --flap: #2d4a7c; --product: #d6973c; --product-edge: #f1b65d;
+      --ok: #5fd08c; --ok-soft: #13291c; --warn: #f3b263; --warn-bg: #352512; --bad: #f2827d; --bad-bg: #371716;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11151c; --card: #1a2029; --ink: #e6ebf3; --muted: #9aa5b8; --line: #2c3442; --field: #141921;
+    --accent: #7ea2ff; --accent-ink: #0d1424; --accent-soft: #1f2a45;
+    --bag: #22365a; --bag-edge: #5e8ef0; --flap: #2d4a7c; --product: #d6973c; --product-edge: #f1b65d;
+    --ok: #5fd08c; --ok-soft: #13291c; --warn: #f3b263; --warn-bg: #352512; --bad: #f2827d; --bad-bg: #371716;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--body); padding-inline: 16px; padding-block: 24px 40px; }
+  [hidden] { display: none !important; }
+  .wrap { max-width: 1160px; margin: 0 auto; display: grid; gap: 16px; }
+  header h1 { font: 800 26px/1.15 var(--display); margin: 0 0 4px; text-wrap: balance; letter-spacing: -.01em; }
+  header p { margin: 0; color: var(--muted); max-width: 65ch; }
+  main { display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 16px; align-items: start; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; min-width: 0; }
+  h2 { font: 600 12px/1.2 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+  h3 { font: 600 15px/1.3 var(--display); margin: 0 0 8px; }
+  .num-txt, .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  button, input { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn { border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); border-radius: 8px; padding: 7px 14px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .btn.ghost { background: transparent; color: var(--accent); }
+  .btn.small { padding: 4px 10px; font-size: 13px; }
+  .btn.danger { border-color: var(--bad); background: var(--bad); color: #fff; }
+  .btn.quiet { border-color: var(--line); background: transparent; color: var(--ink); font-weight: 500; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .text-in { padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--field); min-width: 0; }
+
+  /* save bar */
+  .savebar { display: grid; gap: 6px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  .savebar .row { display: flex; gap: 8px; }
+  .savebar .text-in { flex: 1; }
+  .status { font-size: 12px; color: var(--muted); min-height: 18px; }
+  .status.ok { color: var(--ok); } .status.bad { color: var(--bad); }
+
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .presets button { border: 1px solid var(--line); background: var(--field); border-radius: 999px; padding: 3px 11px; font-size: 13px; cursor: pointer; }
+  .presets button:hover { border-color: var(--accent); color: var(--accent); }
+  .field { margin-bottom: 14px; }
+  .field .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 2px; flex-wrap: wrap; }
+  .field label { font-weight: 600; }
+  .field small { display: block; color: var(--muted); font-weight: 400; font-size: 12px; }
+  .num { display: flex; align-items: center; gap: 4px; }
+  .num input { width: 70px; padding: 5px 6px; border: 1px solid var(--line); border-radius: 7px; background: var(--field); text-align: right; font-family: var(--mono); font-size: 14px; }
+  .num span { color: var(--muted); font-size: 13px; }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
+  .switch { display: flex; gap: 10px; align-items: flex-start; margin: 4px 0 16px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
+  .switch input { margin-top: 4px; accent-color: var(--accent); width: 16px; height: 16px; flex: none; }
+  .switch small { display: block; color: var(--muted); font-size: 12px; }
+  .switch:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+
+  .result { background: var(--accent-soft); border-radius: 10px; padding: 14px 16px; }
+  .result.none { background: var(--bad-bg); }
+  .result .label { color: var(--muted); font-size: 13px; }
+  .result .big { font: 800 36px/1.1 var(--display); color: var(--accent); letter-spacing: -.01em; }
+  .result.none .big { color: var(--bad); font-size: 22px; }
+  .result .sub { color: var(--muted); font-size: 13px; }
+  .result dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3px 12px; margin: 10px 0 0; font-size: 13px; }
+  .result dt { color: var(--muted); } .result dd { margin: 0; text-align: right; font-family: var(--mono); font-size: 12.5px; }
+  .tight-warn, .note { margin-top: 10px; padding: 8px 10px; border-radius: 8px; font-size: 13px; }
+  .tight-warn, .note.tip { background: var(--warn-bg); color: var(--warn); }
+  .note.info { background: var(--ok-soft); color: var(--ok); }
+
+  /* preview */
+  .views { display: grid; grid-template-columns: minmax(0, 1fr) minmax(90px, 170px); gap: 8px; align-items: start; }
+  svg { width: 100%; height: auto; display: block; max-height: 70vh; }
+  svg text { fill: var(--ink); font: 12px var(--body); }
+  svg .dim { stroke: var(--muted); stroke-width: 1; fill: none; }
+  svg .dimtxt { fill: var(--muted); font-size: 12px; }
+  svg .grid { stroke: var(--line); stroke-width: 1; }
+  .caption { color: var(--muted); font-size: 12px; text-align: center; margin-top: 4px; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 10px; }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .sizes-h { margin: 16px 0 0; font-size: 13px; color: var(--muted); }
+  .sizes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .sizes span { padding: 2px 8px; border-radius: 6px; font: 500 13px var(--mono); border: 1px solid var(--line); color: var(--muted); opacity: .45; transition: all .2s; }
+  .sizes span.fits { opacity: 1; color: var(--ok); border-color: var(--ok); }
+  .sizes span.tight { opacity: 1; color: var(--warn); border-color: var(--warn); border-style: dashed; }
+  .sizes span.pick { opacity: 1; background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .sizes span.pick.tight { background: var(--warn); border-color: var(--warn); color: var(--card); border-style: solid; }
+  details { margin-top: 14px; color: var(--muted); font-size: 13px; }
+  details summary { cursor: pointer; }
+  details p, details ul { max-width: 70ch; }
+
+  /* saved products */
+  .products-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .products-head .text-in { width: 220px; max-width: 100%; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; font: 600 11px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 6px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tr.active td { background: var(--accent-soft); }
+  td.name { font-weight: 600; min-width: 140px; }
+  td.dims, td.bag { font-family: var(--mono); font-size: 13px; white-space: nowrap; }
+  td.bag b { color: var(--accent); }
+  td.acts { text-align: right; white-space: nowrap; }
+  td.acts .btn + .btn { margin-left: 6px; }
+  .pill { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 999px; background: var(--field); border: 1px solid var(--line); color: var(--muted); margin-left: 6px; vertical-align: 1px; font-weight: 500; }
+  .empty { color: var(--muted); padding: 14px 0 4px; }
+
+  .editor .list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .editor .list span { display: inline-flex; align-items: center; gap: 2px; padding: 1px 3px 1px 9px; border: 1px solid var(--line); border-radius: 7px; font: 500 13px var(--mono); }
+  .editor .list button { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 3px 5px; border-radius: 4px; }
+  .editor .list button:hover { color: var(--bad); background: var(--bad-bg); }
+  .editor .add { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .editor .add input { width: 64px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--field); text-align: right; font-family: var(--mono); }
+  .editor .msg { font-size: 12px; color: var(--muted); min-height: 18px; margin-top: 6px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+  /* account bar + login dialog */
+  .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+  .top > div:first-child { min-width: 0; flex: 1 1 420px; }
+  .acct { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .who { font: 500 13px var(--mono); padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); }
+  dialog#login { border: 1px solid var(--line); border-radius: 14px; padding: 0; width: min(420px, calc(100vw - 32px)); background: var(--card); color: var(--ink); box-shadow: 0 20px 60px rgba(10, 20, 40, .25); }
+  dialog#login::backdrop { background: rgba(12, 18, 30, .45); }
+  .dlg { padding: 20px; display: grid; gap: 14px; }
+  .dlg-head { display: flex; justify-content: space-between; align-items: center; }
+  .dlg-head h3 { margin: 0; font-size: 20px; }
+  .dlg-x { border: 0; background: none; font-size: 22px; line-height: 1; color: var(--muted); cursor: pointer; padding: 4px 8px; border-radius: 6px; }
+  .dlg-x:hover { background: var(--field); }
+  .dlg p { margin: 0; color: var(--muted); }
+  .dlg .step { display: grid; gap: 12px; }
+  .dlg .btn { padding: 10px 14px; font-size: 15px; }
+  .dlg .full { width: 100%; }
+  .phone-row { display: flex; gap: 8px; }
+  .phone-row select { padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--field); color: var(--ink); font: 500 15px var(--mono); }
+  .phone-row input { flex: 1; min-width: 0; font: 500 17px var(--mono); letter-spacing: .04em; }
+  #otp { font: 600 24px var(--mono); letter-spacing: .4em; text-align: center; padding: 10px; }
+  .dlg .links { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .linkbtn { border: 0; background: none; color: var(--accent); cursor: pointer; padding: 2px 0; font-size: 14px; }
+  .linkbtn:disabled { color: var(--muted); cursor: default; }
+  .dlg-err { margin: 0; padding: 8px 10px; border-radius: 8px; background: var(--bad-bg); color: var(--bad); font-size: 13px; }
+  .dlg .fine { font-size: 12px; color: var(--muted); }
+  .off { padding: 8px 10px; border-radius: 8px; background: var(--warn-bg); color: var(--warn); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Poly Bag Size Calculator</h1>
+      <p>Enter your product's size in cm or inches and see which courier bag from your size list it packs into, drawn to scale. Save products to look them up later.</p>
+    </div>
+    <div class="acct">
+      <span class="who" id="acct-label" hidden></span>
+      <button class="btn small" id="acct-login" hidden>Log in with mobile</button>
+      <button class="btn quiet small" id="acct-logout" hidden>Log out</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="card" aria-label="Product size">
+      <div class="savebar">
+        <label for="pname"><h3 style="margin:0">Product name</h3></label>
+        <div class="row">
+          <input id="pname" class="text-in" type="text" maxlength="80" placeholder="e.g. Men's running shoe, size 9" autocomplete="off">
+          <button class="btn" id="save-btn">Save</button>
+        </div>
+        <div class="status" id="save-status" aria-live="polite">Loading…</div>
+      </div>
+
+      <h2>Product size</h2>
+      <div class="presets" id="presets"></div>
+
+      <div class="field"><div class="row"><label for="L">Length</label><div class="num"><input id="L-n" type="number" min="1" max="150" step="0.5" aria-label="Length in cm"><span>cm</span><span>=</span><input id="L-i" type="number" min="0" max="60" step="0.25" aria-label="Length in inches"><span>in</span></div></div>
+        <input id="L" type="range" min="1" max="75" step="0.5" aria-label="Length slider"></div>
+      <div class="field"><div class="row"><label for="B">Width</label><div class="num"><input id="B-n" type="number" min="1" max="150" step="0.5" aria-label="Width in cm"><span>cm</span><span>=</span><input id="B-i" type="number" min="0" max="60" step="0.25" aria-label="Width in inches"><span>in</span></div></div>
+        <input id="B" type="range" min="1" max="70" step="0.5" aria-label="Width slider"></div>
+      <div class="field"><div class="row"><label for="H">Height <small>(thickness)</small></label><div class="num"><input id="H-n" type="number" min="0.1" max="100" step="0.5" aria-label="Height in cm"><span>cm</span><span>=</span><input id="H-i" type="number" min="0" max="60" step="0.25" aria-label="Height in inches"><span>in</span></div></div>
+        <input id="H" type="range" min="0.5" max="40" step="0.5" aria-label="Height slider"></div>
+      <div class="field"><div class="row"><label for="M">Extra room <small>(breathing space)</small></label><div class="num"><input id="M-n" type="number" min="0" max="10" step="0.5" aria-label="Extra room in cm"><span>cm</span><span>=</span><input id="M-i" type="number" min="0" max="60" step="0.25" aria-label="Extra room in inches"><span>in</span></div></div>
+        <input id="M" type="range" min="0" max="10" step="0.5" aria-label="Extra room slider"></div>
+
+      <label class="switch">
+        <input type="checkbox" id="soft">
+        <span><b>Soft item (clothing)</b><small>Fabric squashes, so height counts at half and the tight-fit rule is off. Use for T-shirts, kurtas, etc. Keep it off for boxes.</small></span>
+      </label>
+
+      <div class="result" id="result">
+        <div class="label">Use this poly bag</div>
+        <div class="big" id="out-size">–</div>
+        <div class="sub" id="out-sub">–</div>
+        <dl>
+          <dt>Width needed</dt><dd id="r-nw"></dd>
+          <dt>Length needed</dt><dd id="r-nl"></dd>
+          <dt>Spare room</dt><dd id="r-spare"></dd>
+          <dt>Product lies</dt><dd id="r-orient"></dd>
+        </dl>
+        <div class="tight-warn" id="tight-warn" hidden></div>
+      </div>
+      <div class="note" id="note" hidden></div>
+    </section>
+
+    <section class="card" aria-label="Live preview">
+      <h2>Live preview, drawn to scale</h2>
+      <div class="views">
+        <div>
+          <svg id="front" viewBox="0 0 560 600" role="img" aria-label="Front view of the poly bag with the product inside"></svg>
+          <div class="caption">Front view, portrait. Grid squares are 2 inches.</div>
+        </div>
+        <div>
+          <svg id="side" viewBox="0 0 200 600" role="img" aria-label="Side view showing how the bag closes over the product and the flap folds over"></svg>
+          <div class="caption">Side view: how it closes</div>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--bag);border:1px solid var(--bag-edge)"></i>Bag (width × length)</span>
+        <span><i style="background:var(--flap);border:1px solid var(--bag-edge)"></i>2 in flap (extra)</span>
+        <span><i style="background:var(--product);border:1px solid var(--product-edge)"></i>Product</span>
+        <span><i style="border:2px dashed var(--accent)"></i>Bag area the product uses up</span>
+      </div>
+      <div class="sizes-h">Your bag sizes (inches, width × length, flap not included). Green fits comfortably, amber dashed is tight (under ½ in spare), filled is recommended.</div>
+      <div class="sizes" id="sizes"></div>
+      <details>
+        <summary>How is this calculated?</summary>
+        <p>A poly bag is flat, so a product with height (thickness) uses up bag in both directions:</p>
+        <ul>
+          <li><b>Width:</b> the bag wraps around the front, back and both sides, so it needs product width + height.</li>
+          <li><b>Length:</b> the bag pinches shut below the product (half the height) and again above it (the other half) so the mouth lies flat. So it needs product length + height.</li>
+          <li>Plus your <b>extra room</b> on both, and <b>1 cm closing room</b> on the length so the adhesive flap folds over and seals fully.</li>
+        </ul>
+        <p>Example: a 9 × 9 × 9 cm cube needs 18 cm of width and 18 cm of length before extra room, not 9 × 9.
+        Bag film is treated as not stretching: a bag that only fits by stretching tears or pops its seal in transit.</p>
+        <p>The app picks the smallest bag in your list that covers both, trying the product upright and turned sideways.
+        If that bag leaves less than ½ inch spare in either direction, it's flagged as tight and the next size up is recommended.
+        <b>Soft item (clothing)</b> counts height at half and switches the tight-fit rule off.
+        The 2 inch flap is on top of the bag length, the way suppliers quote sizes.</p>
+      </details>
+    </section>
+  </main>
+
+  <section class="card" aria-label="My products">
+    <div class="products-head">
+      <h2 style="margin:0">My products</h2>
+      <input id="search" class="text-in" type="search" placeholder="Search products" aria-label="Search saved products">
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Product</th><th>Size (L × W × H)</th><th>Bag now</th><th></th></tr></thead>
+        <tbody id="plist"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="pempty">No saved products yet. Set a size above, type a product name and press Save.</div>
+  </section>
+
+  <section class="card editor" aria-label="Your bag sizes">
+    <h2>Your bag sizes</h2>
+    <div class="list" id="edit-list"></div>
+    <div class="add">
+      <input id="add-w" type="number" min="1" max="60" step="1" placeholder="W" aria-label="Bag width in inches"> ×
+      <input id="add-l" type="number" min="1" max="60" step="1" placeholder="L" aria-label="Bag length in inches"> in
+      <button class="btn small" id="add-btn">Add size</button>
+      <span id="reset-wrap"><button class="btn ghost small" id="reset-btn">Reset to default list</button></span>
+    </div>
+    <div class="msg" id="edit-msg">Width × length in inches, flap not included.</div>
+  </section>
+</div>
+
+<dialog id="login" aria-labelledby="dlg-title">
+  <div class="dlg">
+    <div class="dlg-head"><h3 id="dlg-title">Welcome</h3><button class="dlg-x" id="dlg-close" aria-label="Close">×</button></div>
+
+    <div class="step" id="step-choose">
+      <p>Log in with your mobile number to save your products and open them on any device.</p>
+      <button class="btn full" id="choose-phone">Log in with mobile number</button>
+      <button class="btn quiet full" id="choose-guest">Continue as guest</button>
+      <p class="fine">As a guest, saved products stay on this device. You can log in later and keep them.</p>
+    </div>
+
+    <div class="step" id="step-phone" hidden>
+      <label for="phone">Mobile number</label>
+      <div class="phone-row">
+        <select id="cc" aria-label="Country code">
+          <option value="+91" selected>+91</option><option value="+971">+971</option><option value="+1">+1</option>
+          <option value="+44">+44</option><option value="+61">+61</option><option value="+65">+65</option>
+        </select>
+        <input id="phone" class="text-in" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="15" placeholder="98765 43210">
+      </div>
+      <div class="off" id="phone-off" hidden>Mobile login isn't switched on for this site yet. You can keep using it as a guest.</div>
+      <button class="btn full" id="send-otp">Send OTP</button>
+      <p class="fine">We'll send a 6-digit code by SMS. Standard SMS rates may apply.</p>
+      <div class="links"><button class="linkbtn" id="back-choose">Back</button><span id="dlg-guest-row"><button class="linkbtn" id="dlg-guest">Continue as guest</button></span></div>
+    </div>
+
+    <div class="step" id="step-otp" hidden>
+      <p>Enter the 6-digit code sent to <b class="mono" id="otp-to"></b></p>
+      <input id="otp" class="text-in" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" aria-label="6-digit OTP">
+      <button class="btn full" id="verify">Verify and log in</button>
+      <div class="links"><button class="linkbtn" id="change-number">Change number</button><button class="linkbtn" id="resend" disabled>Resend in 30s</button></div>
+    </div>
+
+    <p class="dlg-err" id="dlg-err" role="alert" hidden></p>
+  </div>
+</dialog>
+<div id="recaptcha-anchor"></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
