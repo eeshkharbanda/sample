@@ -74,6 +74,9 @@
   .sizes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
   .sizes span { padding: 3px 9px; border-radius: 7px; font-size: 13px; font-variant-numeric: tabular-nums; border: 1px solid var(--line); color: var(--muted); opacity: .45; transition: all .2s; }
   .sizes span.fits { opacity: 1; color: var(--ok); border-color: var(--ok); }
+  .sizes span.tight { opacity: 1; color: var(--warn); border-color: var(--warn); border-style: dashed; }
+  .sizes span.pick.tight { background: var(--warn); border-color: var(--warn); color: #fff; border-style: solid; }
+  .tight-warn { display: none; margin-top: 10px; padding: 8px 10px; border-radius: 8px; background: var(--warn-bg); color: var(--warn); font-size: 13px; }
   .sizes span.pick { opacity: 1; background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
   .sizes-h { margin: 18px 0 0; font-size: 13px; color: var(--muted); }
   details { margin-top: 14px; color: var(--muted); font-size: 13px; }
@@ -110,6 +113,7 @@
         <dt>Spare room</dt><dd id="r-spare"></dd>
         <dt>Product lies</dt><dd id="r-orient"></dd>
       </dl>
+      <div class="tight-warn" id="tight-warn"></div>
     </div>
     <div class="note" id="note"></div>
   </section>
@@ -132,7 +136,7 @@
       <span><i style="background:var(--product);border:1px solid var(--product-edge)"></i>Product</span>
       <span><i style="border:2px dashed var(--accent)"></i>Bag area the product uses up</span>
     </div>
-    <div class="sizes-h">Your bag sizes (inches, width × length, flap not included). Green = fits, filled = best pick.</div>
+    <div class="sizes-h">Your bag sizes (inches, width × length, flap not included). Green = fits comfortably, amber dashed = tight (under ½ in spare), filled = recommended.</div>
     <div class="sizes" id="sizes"></div>
     <details>
       <summary>How is this calculated?</summary>
@@ -145,6 +149,7 @@
       <p>Example: a 9 × 9 × 9 cm cube needs 9 + 9 = 18 cm of width and 9 + 9 = 18 cm of length before extra room, not 9 × 9.
       Poly bag film is treated as <b>not stretching</b>: a bag that only fits by stretching tears or pops its seal in transit.<br>
       The app then picks the <b>smallest bag in your list</b> that covers both, trying the product both ways round (portrait and turned sideways).
+      If the smallest bag that fits leaves less than ½ inch spare in either direction, it's flagged as tight and the next size up is recommended.
       The 2 inch flap is on top of the bag length, the same way your supplier quotes sizes.</p>
     </details>
     <div class="editor">
@@ -191,25 +196,33 @@ const f1 = n => (Math.round(n * 10) / 10).toString();
 const CLOSE = 1;  // cm of flat bag above the product so the flap folds over and seals
 function need(along, across, H, M) { return { w: (across + H + M) / IN, l: (along + H + M + CLOSE) / IN, along, across }; }
 const fits = (bag, n) => bag[0] >= n.w - 1e-9 && bag[1] >= n.l - 1e-9;
+// A bag that fits by less than this (in either direction) is flagged as tight and the next size up is recommended.
+const TIGHT = 0.5;  // inches
+const comfy = (bag, n) => bag[0] - n.w >= TIGHT - 1e-9 && bag[1] - n.l >= TIGHT - 1e-9;
 function choose(L, B, H, M) {
   const opts = [need(L, B, H, M), need(B, L, H, M)];  // portrait, or turned 90°
-  let best = null;
-  for (const n of opts) {
-    const bag = BAGS.find(b => fits(b, n));            // BAGS is sorted smallest first
-    if (bag && (!best || bag[0] * bag[1] < best.bag[0] * best.bag[1])) best = { bag, n, turned: n !== opts[0] };
-  }
-  return { best, opts };
+  const smallest = test => {
+    let r = null;
+    for (const n of opts) {
+      const bag = BAGS.find(b => test(b, n));          // BAGS is sorted smallest first
+      if (bag && (!r || bag[0] * bag[1] < r.bag[0] * r.bag[1])) r = { bag, n, turned: n !== opts[0] };
+    }
+    return r;
+  };
+  const fit = smallest(fits), roomy = smallest(comfy);
+  if (roomy) return { best: roomy, tight: fit && fit.bag !== roomy.bag ? fit : null, opts };
+  return { best: fit, tight: null, tightOnly: !!fit, opts };  // only tight fits exist (or nothing fits)
 }
 
 // ---- rendering ------------------------------------------------------------
 let shown = null, goal = null;
 function computeGoal() {
   const { L, B, H, M } = state;
-  const { best, opts } = choose(L, B, H, M);
+  const { best, tight, tightOnly, opts } = choose(L, B, H, M);
   const n = best ? best.n : opts[0];
   // when nothing fits, draw the exact custom size needed
   const W = best ? best.bag[0] : Math.ceil(n.w), BL = best ? best.bag[1] : Math.ceil(n.l);
-  return { best, opts, v: { W, BL, nw: n.w, nl: n.l, pw: n.across / IN, pl: n.along / IN, ph: state.H / IN } };
+  return { best, tight, tightOnly, opts, v: { W, BL, nw: n.w, nl: n.l, pw: n.across / IN, pl: n.along / IN, ph: state.H / IN } };
 }
 function draw(v) {
   const VW = 560, VH = 600, pad = 50;
@@ -278,7 +291,7 @@ function animate() {
 }
 function update() {
   goal = computeGoal();
-  const { best, opts } = goal, { L, B, H, M } = state;
+  const { best, tight, tightOnly, opts } = goal, { L, B, H, M } = state;
   const n = best ? best.n : opts[0];
   const res = $('result');
   res.classList.toggle('none', !best);
@@ -287,7 +300,17 @@ function update() {
     $('out-size').textContent = `${w} × ${l} in`;
     $('out-sub').textContent = `+ 2 in flap · ${f1(w * IN)} × ${f1(l * IN)} cm (${f1((l + FLAP) * IN)} cm with flap)`;
     $('r-spare').textContent = `${f1(w - n.w)} in wide · ${f1(l - n.l)} in long`;
+    const tw = $('tight-warn');
+    if (tight) {
+      const sp = Math.min(tight.bag[0] - tight.n.w, tight.bag[1] - tight.n.l);
+      tw.style.display = 'block';
+      tw.textContent = `${tight.bag[0]} × ${tight.bag[1]} technically fits, but with only ${f1(sp)} in to spare. That's too tight to pack and seal reliably, so the next size up is recommended.`;
+    } else if (tightOnly) {
+      tw.style.display = 'block';
+      tw.textContent = `Tight fit: only ${f1(Math.min(w - n.w, l - n.l))} in to spare, and there's no bigger size in your list. Test-pack one before using it.`;
+    } else tw.style.display = 'none';
   } else {
+    $('tight-warn').style.display = 'none';
     $('out-size').textContent = 'No size in your list fits';
     $('out-sub').textContent = `Needs a custom bag of at least ${f1(n.w)} × ${f1(n.l)} in + flap, or a box.`;
     $('r-spare').textContent = '–';
@@ -298,7 +321,8 @@ function update() {
 
   // size chips
   $('sizes').innerHTML = BAGS.map(b => {
-    const cls = best && b === best.bag ? 'pick' : opts.some(o => fits(b, o)) ? 'fits' : '';
+    const cls = best && b === best.bag ? (tightOnly ? 'pick tight' : 'pick')
+      : opts.some(o => comfy(b, o)) ? 'fits' : opts.some(o => fits(b, o)) ? 'tight' : '';
     return `<span class="${cls}">${b[0]}×${b[1]}</span>`;
   }).join('');
 
