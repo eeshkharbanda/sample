@@ -51,6 +51,10 @@
   .presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
   .presets button { border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 13px; cursor: pointer; }
   .presets button:hover { border-color: var(--accent); color: var(--accent); }
+  .switch { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 16px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
+  .switch input { margin-top: 4px; accent-color: var(--accent); width: 16px; height: 16px; flex: none; }
+  .switch small { display: block; color: var(--muted); font-size: 12px; }
+  .switch:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
   .result { background: var(--accent-soft); border-radius: 12px; padding: 14px 16px; }
   .result.none { background: var(--bad-bg); }
   .result .label { color: var(--muted); font-size: 13px; }
@@ -103,6 +107,11 @@
     <div class="field"><div class="row"><label for="M">Extra room <small>(breathing space)</small></label><div class="num"><input id="M-n" type="number" min="0" max="10" step="0.5"><span>cm</span><span class="eq">=</span><input id="M-i" type="number" min="0" max="60" step="0.25" aria-label="in inches"><span>in</span></div></div>
       <input id="M" type="range" min="0" max="10" step="0.5"></div>
 
+    <label class="switch">
+      <input type="checkbox" id="soft">
+      <span><b>Soft item (clothing)</b><small>Fabric squashes, so height counts at half and the tight-fit rule is off. Use for T-shirts, kurtas, etc. Keep it off for boxes.</small></span>
+    </label>
+
     <div class="result" id="result">
       <div class="label">Use this poly bag</div>
       <div class="big" id="out-size">–</div>
@@ -149,6 +158,8 @@
       <p>Example: a 9 × 9 × 9 cm cube needs 9 + 9 = 18 cm of width and 9 + 9 = 18 cm of length before extra room, not 9 × 9.
       Poly bag film is treated as <b>not stretching</b>: a bag that only fits by stretching tears or pops its seal in transit.<br>
       The app then picks the <b>smallest bag in your list</b> that covers both, trying the product both ways round (portrait and turned sideways).
+      <b>Soft item (clothing)</b> counts the height at half, because folded fabric squashes and moulds to the bag, and switches the tight-fit rule off.
+      Boxes and rigid items should leave it off.<br>
       If the smallest bag that fits leaves less than ½ inch spare in either direction, it's flagged as tight and the next size up is recommended.
       The 2 inch flap is on top of the bag length, the same way your supplier quotes sizes.</p>
     </details>
@@ -185,8 +196,9 @@ function loadBags() {
 }
 function saveBags() { try { localStorage.setItem(KEY, JSON.stringify(BAGS)); } catch (e) {} }
 const maxW = () => Math.max(...BAGS.map(b => b[0]), 6), maxL = () => Math.max(...BAGS.map(b => b[1]), 8) + FLAP;
-const PRESETS = [['9 cm cube', 9, 9, 9], ['T-shirt (folded)', 28, 22, 3], ['Phone box', 17, 9, 4], ['Paperback book', 21, 14, 3], ['Kurta (folded)', 35, 28, 4], ['Shoe box', 33, 20, 12]];
-const state = { L: 30, B: 20, H: 5, M: 1.5 };
+const PRESETS = [['T-shirt (folded)', 28, 22, 3, true], ['Kurta (folded)', 35, 28, 4, true], ['9 cm cube', 9, 9, 9],
+  ['Phone box', 17, 9, 4], ['Paperback book', 21, 14, 3], ['Shoe box', 33, 20, 12]];
+const state = { L: 30, B: 20, H: 5, M: 1.5, soft: false };
 const $ = id => document.getElementById(id);
 const f1 = n => (Math.round(n * 10) / 10).toString();
 
@@ -198,7 +210,11 @@ function need(along, across, H, M) { return { w: (across + H + M) / IN, l: (alon
 const fits = (bag, n) => bag[0] >= n.w - 1e-9 && bag[1] >= n.l - 1e-9;
 // A bag that fits by less than this (in either direction) is flagged as tight and the next size up is recommended.
 const TIGHT = 0.5;  // inches
-const comfy = (bag, n) => bag[0] - n.w >= TIGHT - 1e-9 && bag[1] - n.l >= TIGHT - 1e-9;
+// Soft items (clothing) compress, so their height only takes up part of the bag, and tight fits are fine.
+const SOFT_H = 0.5;
+const effH = () => state.soft ? state.H * SOFT_H : state.H;
+const tightLimit = () => state.soft ? 0 : TIGHT;
+const comfy = (bag, n) => bag[0] - n.w >= tightLimit() - 1e-9 && bag[1] - n.l >= tightLimit() - 1e-9;
 function choose(L, B, H, M) {
   const opts = [need(L, B, H, M), need(B, L, H, M)];  // portrait, or turned 90°
   const smallest = test => {
@@ -217,12 +233,12 @@ function choose(L, B, H, M) {
 // ---- rendering ------------------------------------------------------------
 let shown = null, goal = null;
 function computeGoal() {
-  const { L, B, H, M } = state;
+  const { L, B, M } = state, H = effH();
   const { best, tight, tightOnly, opts } = choose(L, B, H, M);
   const n = best ? best.n : opts[0];
   // when nothing fits, draw the exact custom size needed
   const W = best ? best.bag[0] : Math.ceil(n.w), BL = best ? best.bag[1] : Math.ceil(n.l);
-  return { best, tight, tightOnly, opts, v: { W, BL, nw: n.w, nl: n.l, pw: n.across / IN, pl: n.along / IN, ph: state.H / IN } };
+  return { best, tight, tightOnly, opts, v: { W, BL, nw: n.w, nl: n.l, pw: n.across / IN, pl: n.along / IN, ph: effH() / IN } };
 }
 function draw(v) {
   const VW = 560, VH = 600, pad = 50;
@@ -291,7 +307,7 @@ function animate() {
 }
 function update() {
   goal = computeGoal();
-  const { best, tight, tightOnly, opts } = goal, { L, B, H, M } = state;
+  const { best, tight, tightOnly, opts } = goal, { L, B, M } = state, H = effH();
   const n = best ? best.n : opts[0];
   const res = $('result');
   res.classList.toggle('none', !best);
@@ -315,8 +331,9 @@ function update() {
     $('out-sub').textContent = `Needs a custom bag of at least ${f1(n.w)} × ${f1(n.l)} in + flap, or a box.`;
     $('r-spare').textContent = '–';
   }
-  $('r-nw').textContent = `${f1(n.across)} + ${f1(H)} + ${f1(M)} = ${f1(n.w * IN)} cm (${f1(n.w)} in)`;
-  $('r-nl').textContent = `${f1(n.along)} + ${f1(H)} + ${f1(M)} + ${CLOSE} = ${f1(n.l * IN)} cm (${f1(n.l)} in)`;
+  const hTxt = state.soft ? `½×${f1(state.H)}` : f1(H);
+  $('r-nw').textContent = `${f1(n.across)} + ${hTxt} + ${f1(M)} = ${f1(n.w * IN)} cm (${f1(n.w)} in)`;
+  $('r-nl').textContent = `${f1(n.along)} + ${hTxt} + ${f1(M)} + ${CLOSE} = ${f1(n.l * IN)} cm (${f1(n.l)} in)`;
   $('r-orient').textContent = best && best.turned ? 'turned sideways' : 'upright (length top to bottom)';
 
   // size chips
@@ -329,12 +346,12 @@ function update() {
   // advice: would a different thickness side give a smaller bag?
   const note = $('note'); note.style.display = 'none';
   const area = r => r ? r.bag[0] * r.bag[1] : Infinity;
-  const alts = [['length', choose(B, H, L, M).best], ['width', choose(L, H, B, M).best]];
+  const alts = state.soft ? [] : [['length', choose(B, H, L, M).best], ['width', choose(L, H, B, M).best]];
   const better = alts.filter(([, r]) => area(r) < area(best)).sort((a, b) => area(a[1]) - area(b[1]))[0];
   if (better) {
     note.className = 'note tip'; note.style.display = 'block';
     note.textContent = `Tip: if the product can be packed with its ${better[0]} as the thickness instead, a ${better[1].bag[0]} × ${better[1].bag[1]} in bag is enough.`;
-  } else if (H > Math.min(L, B)) {
+  } else if (!state.soft && H > Math.min(L, B)) {
     note.className = 'note tip'; note.style.display = 'block';
     note.textContent = 'Heads-up: this product is thicker than it is wide. A flat poly bag will bulge; a box or padded mailer may protect it better.';
   } else if (best && best.turned) {
@@ -388,10 +405,12 @@ $('reset-btn').addEventListener('click', () => {
   BAGS = sortBags(DEFAULT_BAGS.map(b => [...b]));
   changed('Reset to the default list.');
 });
+$('soft').addEventListener('change', e => { state.soft = e.target.checked; update(); });
+state.soft = $('soft').checked; update();  // browsers may restore the checkbox on reload
 renderEditor();
-PRESETS.forEach(([name, l, b, h]) => {
+PRESETS.forEach(([name, l, b, h, soft = false]) => {
   const btn = document.createElement('button'); btn.textContent = name;
-  btn.onclick = () => { set('L', l); set('B', b); set('H', h); };
+  btn.onclick = () => { $('soft').checked = state.soft = soft; set('L', l); set('B', b); set('H', h); };
   $('presets').appendChild(btn);
 });
 </script>
