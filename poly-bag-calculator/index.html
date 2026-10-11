@@ -33,8 +33,20 @@
   .field label { font-weight: 600; }
   .field small { display: block; color: var(--muted); font-weight: 400; font-size: 12px; }
   .num { display: flex; align-items: center; gap: 4px; }
-  .num input { width: 72px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; text-align: right; }
+  .num input { width: 64px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; text-align: right; }
   .num span { color: var(--muted); font-size: 13px; }
+  .num .eq { margin: 0 2px; }
+  .editor { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .editor h3 { margin: 0 0 8px; font-size: 14px; }
+  .editor .list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .editor .list span { display: inline-flex; align-items: center; gap: 4px; padding: 2px 4px 2px 9px; border: 1px solid var(--line); border-radius: 7px; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .editor .list button { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 2px 4px; border-radius: 4px; }
+  .editor .list button:hover { color: var(--bad); background: var(--bad-bg); }
+  .editor .add { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .editor .add input { width: 64px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; text-align: right; }
+  .btn { border: 1px solid var(--accent); background: var(--accent); color: #fff; border-radius: 8px; padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+  .btn.ghost { background: none; color: var(--accent); }
+  .editor .msg { font-size: 12px; color: var(--muted); min-height: 18px; margin-top: 6px; }
   input[type=range] { width: 100%; accent-color: var(--accent); }
   .presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
   .presets button { border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 13px; cursor: pointer; }
@@ -75,16 +87,16 @@
 
 <main>
   <section class="card">
-    <h2>Product (cm)</h2>
+    <h2>Product size</h2>
     <div class="presets" id="presets"></div>
 
-    <div class="field"><div class="row"><label for="L">Length</label><div class="num"><input id="L-n" type="number" min="1" max="150" step="0.5"><span>cm</span></div></div>
+    <div class="field"><div class="row"><label for="L">Length</label><div class="num"><input id="L-n" type="number" min="1" max="150" step="0.5"><span>cm</span><span class="eq">=</span><input id="L-i" type="number" min="0" max="60" step="0.25" aria-label="in inches"><span>in</span></div></div>
       <input id="L" type="range" min="1" max="75" step="0.5"></div>
-    <div class="field"><div class="row"><label for="B">Width</label><div class="num"><input id="B-n" type="number" min="1" max="150" step="0.5"><span>cm</span></div></div>
+    <div class="field"><div class="row"><label for="B">Width</label><div class="num"><input id="B-n" type="number" min="1" max="150" step="0.5"><span>cm</span><span class="eq">=</span><input id="B-i" type="number" min="0" max="60" step="0.25" aria-label="in inches"><span>in</span></div></div>
       <input id="B" type="range" min="1" max="70" step="0.5"></div>
-    <div class="field"><div class="row"><label for="H">Height <small>(thickness)</small></label><div class="num"><input id="H-n" type="number" min="0.1" max="100" step="0.5"><span>cm</span></div></div>
+    <div class="field"><div class="row"><label for="H">Height <small>(thickness)</small></label><div class="num"><input id="H-n" type="number" min="0.1" max="100" step="0.5"><span>cm</span><span class="eq">=</span><input id="H-i" type="number" min="0" max="60" step="0.25" aria-label="in inches"><span>in</span></div></div>
       <input id="H" type="range" min="0.5" max="40" step="0.5"></div>
-    <div class="field"><div class="row"><label for="M">Extra room <small>(breathing space)</small></label><div class="num"><input id="M-n" type="number" min="0" max="10" step="0.5"><span>cm</span></div></div>
+    <div class="field"><div class="row"><label for="M">Extra room <small>(breathing space)</small></label><div class="num"><input id="M-n" type="number" min="0" max="10" step="0.5"><span>cm</span><span class="eq">=</span><input id="M-i" type="number" min="0" max="60" step="0.25" aria-label="in inches"><span>in</span></div></div>
       <input id="M" type="range" min="0" max="10" step="0.5"></div>
 
     <div class="result" id="result">
@@ -120,17 +132,39 @@
       The app then picks the <b>smallest bag in your list</b> that covers both, trying the product both ways round (portrait and turned sideways).
       The 2 inch flap is on top of the bag length, the same way your supplier quotes sizes.</p>
     </details>
+    <div class="editor">
+      <h3>Edit your bag sizes</h3>
+      <div class="list" id="edit-list"></div>
+      <div class="add">
+        <input id="add-w" type="number" min="1" max="60" step="1" placeholder="W" aria-label="Bag width in inches"> ×
+        <input id="add-l" type="number" min="1" max="60" step="1" placeholder="L" aria-label="Bag length in inches"> in
+        <button class="btn" id="add-btn">Add size</button>
+        <button class="btn ghost" id="reset-btn">Reset to default list</button>
+      </div>
+      <div class="msg" id="edit-msg">Width × length in inches, flap not included. Changes are saved in this browser.</div>
+    </div>
   </section>
 </main>
 
 <script>
 const IN = 2.54, FLAP = 2;
 // Supplier sizes in inches: [width (left to right), length (top to bottom)], flap NOT included.
-const BAGS = [
+const DEFAULT_BAGS = [
   [6,8],[7,10],[8,10],[8,12],[9,12],[10,12],[10,14],[12,14],[12,16],[12,18],[14,16],[14,18],[14,20],
   [16,20],[16,22],[18,20],[18,22],[18,24],[20,22],[20,24],[22,24],[24,24],[24,26],[24,28],[26,28],[28,28],
-].sort((a, b) => a[0] * a[1] - b[0] * b[1] || a[0] - b[0]);
-const MAX_W = 28, MAX_L = 28 + FLAP;
+];
+const KEY = 'polybag-sizes';
+const sortBags = list => list.sort((a, b) => a[0] * a[1] - b[0] * b[1] || a[0] - b[0]);
+let BAGS = sortBags(loadBags());
+function loadBags() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY));
+    if (Array.isArray(saved) && saved.length) return saved;
+  } catch (e) {}
+  return DEFAULT_BAGS.map(b => [...b]);
+}
+function saveBags() { try { localStorage.setItem(KEY, JSON.stringify(BAGS)); } catch (e) {} }
+const maxW = () => Math.max(...BAGS.map(b => b[0]), 6), maxL = () => Math.max(...BAGS.map(b => b[1]), 8) + FLAP;
 const PRESETS = [['T-shirt (folded)', 28, 22, 3], ['Phone box', 17, 9, 4], ['Paperback book', 21, 14, 3], ['Kurta (folded)', 35, 28, 4], ['Shoe box', 33, 20, 12]];
 const state = { L: 30, B: 20, H: 5, M: 1 };
 const $ = id => document.getElementById(id);
@@ -162,7 +196,7 @@ function computeGoal() {
 }
 function draw(v) {
   const VW = 560, VH = 600, pad = 50;
-  const k = Math.min((VW - pad * 2) / Math.max(MAX_W, v.W), (VH - pad * 2) / Math.max(MAX_L, v.BL + FLAP));
+  const k = Math.min((VW - pad * 2) / Math.max(maxW(), v.W), (VH - pad * 2) / Math.max(maxL(), v.BL + FLAP));
   const bw = v.W * k, bl = v.BL * k, bf = FLAP * k;
   const x0 = (VW - bw) / 2, y0 = VH - pad - (bl + bf);
   let grid = '';
@@ -242,17 +276,50 @@ function update() {
 }
 
 // ---- wiring ---------------------------------------------------------------
-function set(id, v) {
-  v = parseFloat(v); if (!isFinite(v)) return;
-  state[id] = Math.max(id === 'M' ? 0 : 0.1, v);
-  $(id).value = state[id]; $(id + '-n').value = state[id];
+const r2 = n => Math.round(n * 100) / 100;
+function set(id, cm, from) {
+  cm = parseFloat(cm); if (!isFinite(cm)) return;
+  state[id] = Math.max(id === 'M' ? 0 : 0.1, cm);
+  if (from !== $(id)) $(id).value = state[id];
+  if (from !== $(id + '-n')) $(id + '-n').value = r2(state[id]);
+  if (from !== $(id + '-i')) $(id + '-i').value = r2(state[id] / IN);
   update();
 }
 ['L', 'B', 'H', 'M'].forEach(id => {
-  $(id).addEventListener('input', e => set(id, e.target.value));
-  $(id + '-n').addEventListener('input', e => { if (e.target.value !== '') set(id, e.target.value); });
+  $(id).addEventListener('input', e => set(id, e.target.value, e.target));
+  $(id + '-n').addEventListener('input', e => { if (e.target.value !== '') set(id, e.target.value, e.target); });
+  $(id + '-i').addEventListener('input', e => { if (e.target.value !== '') set(id, e.target.value * IN, e.target); });
+  // tidy the typed box once the user leaves it
+  [$(id + '-n'), $(id + '-i')].forEach(el => el.addEventListener('change', () => set(id, state[id])));
   set(id, state[id]);
 });
+
+// ---- size list editor -------------------------------------------------------
+function renderEditor() {
+  $('edit-list').innerHTML = BAGS.map((b, i) =>
+    `<span>${b[0]}×${b[1]}<button data-i="${i}" aria-label="Remove ${b[0]} by ${b[1]}">×</button></span>`).join('');
+}
+function changed(msg) { sortBags(BAGS); saveBags(); renderEditor(); update(); $('edit-msg').textContent = msg; }
+$('edit-list').addEventListener('click', e => {
+  const i = e.target.dataset.i; if (i === undefined) return;
+  if (BAGS.length === 1) { $('edit-msg').textContent = 'Keep at least one size in the list.'; return; }
+  const [b] = BAGS.splice(+i, 1);
+  changed(`Removed ${b[0]}×${b[1]}.`);
+});
+$('add-btn').addEventListener('click', () => {
+  const w = parseFloat($('add-w').value), l = parseFloat($('add-l').value);
+  if (!(w > 0 && l > 0)) { $('edit-msg').textContent = 'Enter both width and length in inches.'; return; }
+  if (BAGS.some(b => b[0] === w && b[1] === l)) { $('edit-msg').textContent = `${w}×${l} is already in the list.`; return; }
+  BAGS.push([w, l]); $('add-w').value = $('add-l').value = '';
+  changed(`Added ${w}×${l}.`);
+});
+['add-w', 'add-l'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') $('add-btn').click(); }));
+$('reset-btn').addEventListener('click', () => {
+  if (!confirm('Replace your list with the default sizes?')) return;
+  BAGS = sortBags(DEFAULT_BAGS.map(b => [...b]));
+  changed('Reset to the default list.');
+});
+renderEditor();
 PRESETS.forEach(([name, l, b, h]) => {
   const btn = document.createElement('button'); btn.textContent = name;
   btn.onclick = () => { set('L', l); set('B', b); set('H', h); };
