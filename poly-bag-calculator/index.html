@@ -33,7 +33,7 @@
   .field label { font-weight: 600; }
   .field small { display: block; color: var(--muted); font-weight: 400; font-size: 12px; }
   .num { display: flex; align-items: center; gap: 4px; }
-  .num input { width: 64px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; text-align: right; }
+  .num input { width: 70px; padding: 6px 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; text-align: right; }
   .num span { color: var(--muted); font-size: 13px; }
   .num .eq { margin: 0 2px; }
   .editor { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px; }
@@ -63,6 +63,7 @@
   .note.tip { background: var(--warn-bg); color: var(--warn); }
   .note.info { background: var(--ok-soft); color: var(--ok); }
   svg { width: 100%; height: auto; display: block; max-height: 70vh; }
+  .views { display: grid; grid-template-columns: 1fr minmax(90px, 170px); gap: 8px; align-items: start; }
   svg text { fill: var(--ink); font: 12px system-ui, sans-serif; }
   svg .dim { stroke: var(--muted); stroke-width: 1; fill: none; }
   svg .dimtxt { fill: var(--muted); font-size: 12px; }
@@ -104,7 +105,8 @@
       <div class="big" id="out-size">–</div>
       <div class="sub" id="out-sub">–</div>
       <dl>
-        <dt>Product needs</dt><dd id="r-need"></dd>
+        <dt>Width needed</dt><dd id="r-nw"></dd>
+        <dt>Length needed</dt><dd id="r-nl"></dd>
         <dt>Spare room</dt><dd id="r-spare"></dd>
         <dt>Product lies</dt><dd id="r-orient"></dd>
       </dl>
@@ -114,21 +116,34 @@
 
   <section class="card">
     <h2>Live preview, drawn to scale</h2>
-    <svg id="front" viewBox="0 0 560 600" role="img" aria-label="Front view of the poly bag with the product inside"></svg>
-    <div class="caption">Front view, portrait. Grid squares are 2 inches.</div>
+    <div class="views">
+      <div>
+        <svg id="front" viewBox="0 0 560 600" role="img" aria-label="Front view of the poly bag with the product inside"></svg>
+        <div class="caption">Front view, portrait. Grid squares are 2 inches.</div>
+      </div>
+      <div>
+        <svg id="side" viewBox="0 0 200 600" role="img" aria-label="Side view showing how the bag closes over the product and the flap folds over"></svg>
+        <div class="caption">Side view: how it closes</div>
+      </div>
+    </div>
     <div class="legend">
       <span><i style="background:var(--bag);border:1px solid var(--bag-edge)"></i>Bag (width × length)</span>
       <span><i style="background:var(--flap);border:1px solid var(--bag-edge)"></i>2 in flap (extra)</span>
       <span><i style="background:var(--product);border:1px solid var(--product-edge)"></i>Product</span>
-      <span><i style="border:2px dashed var(--accent)"></i>Space the product needs</span>
+      <span><i style="border:2px dashed var(--accent)"></i>Bag area the product uses up</span>
     </div>
     <div class="sizes-h">Your bag sizes (inches, width × length, flap not included). Green = fits, filled = best pick.</div>
     <div class="sizes" id="sizes"></div>
     <details>
       <summary>How is this calculated?</summary>
-      <p>A bag lying flat has to wrap around the product, so the thickness eats into its width.<br>
-      Width needed = product width + height + extra room.<br>
-      Length needed = product length + extra room.<br>
+      <p>A poly bag is flat, so a product with height (thickness) uses up bag in <b>both</b> directions:</p>
+      <ul>
+        <li><b>Width:</b> the bag wraps around the front, back and both sides, so it needs <b>product width + height</b>.</li>
+        <li><b>Length:</b> the bag has to pinch shut below the product (half the height) and again above it (the other half) so the mouth lies flat. So it needs <b>product length + height</b>.</li>
+        <li>On top of that: your <b>extra room</b> on both, and <b>1 cm closing room</b> on the length so the mouth lies flat and the adhesive flap folds over and seals fully.</li>
+      </ul>
+      <p>Example: a 9 × 9 × 9 cm cube needs 9 + 9 = 18 cm of width and 9 + 9 = 18 cm of length before extra room, not 9 × 9.
+      Poly bag film is treated as <b>not stretching</b>: a bag that only fits by stretching tears or pops its seal in transit.<br>
       The app then picks the <b>smallest bag in your list</b> that covers both, trying the product both ways round (portrait and turned sideways).
       The 2 inch flap is on top of the bag length, the same way your supplier quotes sizes.</p>
     </details>
@@ -165,14 +180,16 @@ function loadBags() {
 }
 function saveBags() { try { localStorage.setItem(KEY, JSON.stringify(BAGS)); } catch (e) {} }
 const maxW = () => Math.max(...BAGS.map(b => b[0]), 6), maxL = () => Math.max(...BAGS.map(b => b[1]), 8) + FLAP;
-const PRESETS = [['T-shirt (folded)', 28, 22, 3], ['Phone box', 17, 9, 4], ['Paperback book', 21, 14, 3], ['Kurta (folded)', 35, 28, 4], ['Shoe box', 33, 20, 12]];
-const state = { L: 30, B: 20, H: 5, M: 1 };
+const PRESETS = [['9 cm cube', 9, 9, 9], ['T-shirt (folded)', 28, 22, 3], ['Phone box', 17, 9, 4], ['Paperback book', 21, 14, 3], ['Kurta (folded)', 35, 28, 4], ['Shoe box', 33, 20, 12]];
+const state = { L: 30, B: 20, H: 5, M: 1.5 };
 const $ = id => document.getElementById(id);
 const f1 = n => (Math.round(n * 10) / 10).toString();
 
 // ---- sizing ---------------------------------------------------------------
 // need for one orientation: `along` runs top-to-bottom, `across` runs left-to-right
-function need(along, across, H, M) { return { w: (across + H + M) / IN, l: (along + M) / IN, along, across }; }
+// Flat bag around a block: width wraps across + H; length pinches H/2 below and H/2 above, plus room to close.
+const CLOSE = 1;  // cm of flat bag above the product so the flap folds over and seals
+function need(along, across, H, M) { return { w: (across + H + M) / IN, l: (along + H + M + CLOSE) / IN, along, across }; }
 const fits = (bag, n) => bag[0] >= n.w - 1e-9 && bag[1] >= n.l - 1e-9;
 function choose(L, B, H, M) {
   const opts = [need(L, B, H, M), need(B, L, H, M)];  // portrait, or turned 90°
@@ -192,7 +209,7 @@ function computeGoal() {
   const n = best ? best.n : opts[0];
   // when nothing fits, draw the exact custom size needed
   const W = best ? best.bag[0] : Math.ceil(n.w), BL = best ? best.bag[1] : Math.ceil(n.l);
-  return { best, opts, v: { W, BL, nw: n.w, nl: n.l, pw: n.across / IN, pl: n.along / IN } };
+  return { best, opts, v: { W, BL, nw: n.w, nl: n.l, pw: n.across / IN, pl: n.along / IN, ph: state.H / IN } };
 }
 function draw(v) {
   const VW = 560, VH = 600, pad = 50;
@@ -204,7 +221,7 @@ function draw(v) {
   for (let g = 0; g * k <= VH; g += 2) grid += `<line class="grid" x1="0" x2="${VW}" y1="${VH - pad - g * k}" y2="${VH - pad - g * k}"/>`;
   const nw = v.nw * k, nl = v.nl * k, pw = v.pw * k, pl = v.pl * k;
   const nx = x0 + (bw - nw) / 2, ny = y0 + bf + bl - nl - 2;
-  const px = x0 + (bw - pw) / 2, py = y0 + bf + bl - pl - (nl - pl) / 2 - 2;
+  const px = x0 + (bw - pw) / 2, py = y0 + bf + bl - (v.ph / 2) * k - pl;
   $('front').innerHTML = `${grid}
     <rect x="${x0}" y="${y0 + bf}" width="${bw}" height="${bl}" rx="4" fill="var(--bag)" stroke="var(--bag-edge)" stroke-width="2"/>
     <rect x="${x0}" y="${y0}" width="${bw}" height="${bf}" rx="4" fill="var(--flap)" stroke="var(--bag-edge)" stroke-width="2"/>
@@ -221,6 +238,33 @@ function draw(v) {
     <line class="dim" x1="${x0 - 22}" x2="${x0 - 10}" y1="${y0 + bf}" y2="${y0 + bf}"/>
     <line class="dim" x1="${x0 - 22}" x2="${x0 - 10}" y1="${y0 + bf + bl}" y2="${y0 + bf + bl}"/>
     <text class="dimtxt" transform="translate(${x0 - 24} ${y0 + bf + bl / 2}) rotate(-90)" text-anchor="middle">length ${f1(v.BL)} in</text>`;
+  drawSide(v, k, y0 + bf + bl, y0 + bf, bf, pl);
+}
+// Side view: product seen edge-on, bag pinched to a seam below it, closed flat above it, flap folded over the front.
+function drawSide(v, k, yBottom, yMouth, bf, pl) {
+  const t = v.ph * k, SW = Math.max(150, t + 110), cx = SW / 2;
+  const boxB = yBottom - t / 2, boxT = boxB - pl, apex = boxT - t / 2;
+  const short = yMouth > apex + 0.5;                   // bag too short: mouth can't close flat
+  const open = short ? Math.min(t / 2, yMouth - apex) : 0;  // half-gap left at the mouth
+  const panel = s => `M ${cx} ${yBottom} L ${cx + s * t / 2} ${boxB} L ${cx + s * t / 2} ${boxT} L ${cx + s * open} ${short ? yMouth : apex} L ${cx + s * open} ${yMouth}`;
+  const r = 5, ok = short ? 'var(--bad)' : 'var(--ok)';
+  // flap continues from the back panel (right) and folds down over the front panel (left)
+  const flap = short
+    ? `M ${cx + open} ${yMouth} L ${cx + open} ${yMouth - bf}`
+    : `M ${cx} ${yMouth} A ${r} ${r} 0 0 0 ${cx - 2 * r} ${yMouth} L ${cx - 2 * r} ${yMouth + bf}`;
+  const top = yMouth - (short ? bf : 0) - 34, h = yBottom + 26 - top;
+  const half = t > 24 ? `
+    <text x="${cx + t / 2 + 6}" y="${boxB + t / 4 + 4}" class="dimtxt">½H</text>
+    <text x="${cx + t / 2 + 6}" y="${boxT - t / 4 + 4}" class="dimtxt">½H</text>` : '';
+  $('side').setAttribute('viewBox', `0 ${top} ${SW} ${h}`);
+  $('side').innerHTML = `
+    <rect x="${cx - t / 2}" y="${boxT}" width="${t}" height="${pl}" rx="2" fill="var(--product)" stroke="var(--product-edge)" stroke-width="2"/>
+    <path d="${panel(1)}" fill="none" stroke="var(--bag-edge)" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="${panel(-1)}" fill="none" stroke="var(--bag-edge)" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="${flap}" fill="none" stroke="${ok}" stroke-width="4" stroke-linecap="round"/>${half}
+    ${short ? '' : `<text x="${cx - 2 * r - 6}" y="${yMouth + bf / 2 + 4}" text-anchor="end" class="dimtxt" style="fill:var(--ok)">flap</text>`}
+    <text x="${cx}" y="${top + 18}" text-anchor="middle" style="fill:${ok};font-weight:600">${short ? 'won\'t close' : 'closes & seals'}</text>
+    <text x="${cx}" y="${yBottom + 18}" text-anchor="middle" class="dimtxt">bottom seam</text>`;
 }
 function animate() {
   if (!shown) shown = { ...goal.v };
@@ -248,7 +292,8 @@ function update() {
     $('out-sub').textContent = `Needs a custom bag of at least ${f1(n.w)} × ${f1(n.l)} in + flap, or a box.`;
     $('r-spare').textContent = '–';
   }
-  $('r-need').textContent = `${f1(n.w)} × ${f1(n.l)} in`;
+  $('r-nw').textContent = `${f1(n.across)} + ${f1(H)} + ${f1(M)} = ${f1(n.w * IN)} cm (${f1(n.w)} in)`;
+  $('r-nl').textContent = `${f1(n.along)} + ${f1(H)} + ${f1(M)} + ${CLOSE} = ${f1(n.l * IN)} cm (${f1(n.l)} in)`;
   $('r-orient').textContent = best && best.turned ? 'turned sideways' : 'upright (length top to bottom)';
 
   // size chips
