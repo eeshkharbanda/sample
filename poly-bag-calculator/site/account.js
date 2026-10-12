@@ -75,10 +75,13 @@ function cloudStore(fs, db, uid) {
 export function createAccount() {
   let fb = null, auth = null, fs = null, db = null, store = null, onChange = () => {};
   let verifier = null, confirmation = null, linking = false;
-  const enabled = !!(firebaseConfig && firebaseConfig.apiKey);
+  const demo = firebaseConfig === 'demo';  // practice mode: no SMS, OTP 123456, data stays in the browser
+  const enabled = demo || !!(firebaseConfig && firebaseConfig.apiKey);
 
   async function load() {
-    const [app, a, f] = await Promise.all([
+    let app, a, f;
+    if (demo) { const m = await import('./demo-firebase.js'); [app, a, f] = [m.demoApp, m.demoAuth, m.demoFirestore]; }
+    else [app, a, f] = await Promise.all([
       import(SDK + 'firebase-app.js'), import(SDK + 'firebase-auth.js'), import(SDK + 'firebase-firestore.js')]);
     fb = { app, a }; fs = f;
     const appInst = app.initializeApp(firebaseConfig);
@@ -159,7 +162,7 @@ export function createAccount() {
 
   async function logout() { if (enabled) await fb.a.signOut(auth); }
 
-  return { enabled, start, continueAsGuest, sendOtp, verifyOtp, logout, cancelOtp() { linking = false; confirmation = null; resetVerifier(); } };
+  return { enabled, demo, start, continueAsGuest, sendOtp, verifyOtp, logout, cancelOtp() { linking = false; confirmation = null; resetVerifier(); } };
 }
 
 // Messages people see for Firebase error codes.

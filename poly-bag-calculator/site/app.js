@@ -354,6 +354,7 @@ function showStep(step) {
     setTimeout(() => $('phone').focus(), 0);
   }
   if (step === 'otp') setTimeout(() => $('otp').focus(), 0);
+  $('demo-note').hidden = !account.demo || step === 'choose';
 }
 function openLogin(step) {
   showStep(step);
