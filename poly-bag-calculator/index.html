@@ -2,180 +2,271 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Poly Bag Size Calculator</title>
+<meta name="description" content="Find the right courier poly bag for any product size, see it drawn to scale, and save your products.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
+  /* Layout: a packing-bench tool. Inputs + result on the left, the to-scale bag on the right, saved products below. */
   :root {
-    --bg: #f4f6fb; --card: #fff; --ink: #1c2333; --muted: #6b7489; --line: #e2e6f0;
-    --accent: #4f46e5; --accent-soft: #eef0ff; --bag: #cfe3ff; --bag-edge: #5b8def;
-    --flap: #a9c9ff; --product: #f4b860; --product-edge: #c9811a;
-    --ok: #15803d; --ok-soft: #e7f6ec; --warn: #b45309; --warn-bg: #fff4e0; --bad: #b91c1c; --bad-bg: #fde8e8;
+    --bg: #eef1f5; --card: #ffffff; --ink: #18202e; --muted: #5d6779; --line: #d9dfe8; --field: #f5f7fa;
+    --accent: #1f4fd1; --accent-ink: #ffffff; --accent-soft: #e6edfc;
+    --bag: #cfe0fb; --bag-edge: #4f7fe0; --flap: #a7c4f5; --product: #f1b65d; --product-edge: #b8741a;
+    --ok: #157a3c; --ok-soft: #e4f4ea; --warn: #a44f06; --warn-bg: #fdf1df; --bad: #b4231f; --bad-bg: #fbe6e5;
+    --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   }
   @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #12151d; --card: #1a1f2b; --ink: #e8ecf5; --muted: #98a2b8; --line: #2b3242;
-      --accent: #8b87ff; --accent-soft: #23264a; --bag: #243756; --bag-edge: #5b8def;
-      --flap: #2f4a77; --product: #d99a3d; --product-edge: #f4b860;
-      --ok: #4ade80; --ok-soft: #12301d; --warn: #fbbf6a; --warn-bg: #3a2a10; --bad: #f87171; --bad-bg: #3a1515;
+    :root:not([data-theme="light"]) {
+      --bg: #11151c; --card: #1a2029; --ink: #e6ebf3; --muted: #9aa5b8; --line: #2c3442; --field: #141921;
+      --accent: #7ea2ff; --accent-ink: #0d1424; --accent-soft: #1f2a45;
+      --bag: #22365a; --bag-edge: #5e8ef0; --flap: #2d4a7c; --product: #d6973c; --product-edge: #f1b65d;
+      --ok: #5fd08c; --ok-soft: #13291c; --warn: #f3b263; --warn-bg: #352512; --bad: #f2827d; --bad-bg: #371716;
+      color-scheme: dark;
     }
   }
+  :root[data-theme="dark"] {
+    --bg: #11151c; --card: #1a2029; --ink: #e6ebf3; --muted: #9aa5b8; --line: #2c3442; --field: #141921;
+    --accent: #7ea2ff; --accent-ink: #0d1424; --accent-soft: #1f2a45;
+    --bag: #22365a; --bag-edge: #5e8ef0; --flap: #2d4a7c; --product: #d6973c; --product-edge: #f1b65d;
+    --ok: #5fd08c; --ok-soft: #13291c; --warn: #f3b263; --warn-bg: #352512; --bad: #f2827d; --bad-bg: #371716;
+    color-scheme: dark;
+  }
   * { box-sizing: border-box; }
-  body { margin: 0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); }
-  header { padding: 28px 16px 8px; max-width: 1140px; margin: 0 auto; }
-  h1 { margin: 0 0 4px; font-size: 24px; }
-  header p { margin: 0; color: var(--muted); }
-  main { max-width: 1140px; margin: 0 auto; padding: 16px; display: grid; grid-template-columns: 350px 1fr; gap: 16px; }
-  @media (max-width: 880px) { main { grid-template-columns: 1fr; } }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; min-width: 0; }
-  .card h2 { margin: 0 0 12px; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-  .field { margin-bottom: 16px; }
-  .field .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--body); padding-inline: 16px; padding-block: 24px 40px; }
+  [hidden] { display: none !important; }
+  .wrap { max-width: 1160px; margin: 0 auto; display: grid; gap: 16px; }
+  header h1 { font: 800 26px/1.15 var(--display); margin: 0 0 4px; text-wrap: balance; letter-spacing: -.01em; }
+  header p { margin: 0; color: var(--muted); max-width: 65ch; }
+  main { display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 16px; align-items: start; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; min-width: 0; }
+  h2 { font: 600 12px/1.2 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+  h3 { font: 600 15px/1.3 var(--display); margin: 0 0 8px; }
+  .num-txt, .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  button, input { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn { border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); border-radius: 8px; padding: 7px 14px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .btn.ghost { background: transparent; color: var(--accent); }
+  .btn.small { padding: 4px 10px; font-size: 13px; }
+  .btn.danger { border-color: var(--bad); background: var(--bad); color: #fff; }
+  .btn.quiet { border-color: var(--line); background: transparent; color: var(--ink); font-weight: 500; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .text-in { padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--field); min-width: 0; }
+
+  /* save bar */
+  .savebar { display: grid; gap: 6px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  .savebar .row { display: flex; gap: 8px; }
+  .savebar .text-in { flex: 1; }
+  .status { font-size: 12px; color: var(--muted); min-height: 18px; }
+  .status.ok { color: var(--ok); } .status.bad { color: var(--bad); }
+
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .presets button { border: 1px solid var(--line); background: var(--field); border-radius: 999px; padding: 3px 11px; font-size: 13px; cursor: pointer; }
+  .presets button:hover { border-color: var(--accent); color: var(--accent); }
+  .field { margin-bottom: 14px; }
+  .field .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 2px; flex-wrap: wrap; }
   .field label { font-weight: 600; }
   .field small { display: block; color: var(--muted); font-weight: 400; font-size: 12px; }
   .num { display: flex; align-items: center; gap: 4px; }
-  .num input { width: 70px; padding: 6px 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; text-align: right; }
+  .num input { width: 70px; padding: 5px 6px; border: 1px solid var(--line); border-radius: 7px; background: var(--field); text-align: right; font-family: var(--mono); font-size: 14px; }
   .num span { color: var(--muted); font-size: 13px; }
-  .num .eq { margin: 0 2px; }
-  .editor { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px; }
-  .editor h3 { margin: 0 0 8px; font-size: 14px; }
-  .editor .list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-  .editor .list span { display: inline-flex; align-items: center; gap: 4px; padding: 2px 4px 2px 9px; border: 1px solid var(--line); border-radius: 7px; font-size: 13px; font-variant-numeric: tabular-nums; }
-  .editor .list button { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 2px 4px; border-radius: 4px; }
-  .editor .list button:hover { color: var(--bad); background: var(--bad-bg); }
-  .editor .add { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-  .editor .add input { width: 64px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; text-align: right; }
-  .btn { border: 1px solid var(--accent); background: var(--accent); color: #fff; border-radius: 8px; padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; }
-  .btn.ghost { background: none; color: var(--accent); }
-  .editor .msg { font-size: 12px; color: var(--muted); min-height: 18px; margin-top: 6px; }
   input[type=range] { width: 100%; accent-color: var(--accent); }
-  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-  .presets button { border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 13px; cursor: pointer; }
-  .presets button:hover { border-color: var(--accent); color: var(--accent); }
-  .switch { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 16px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
+  .switch { display: flex; gap: 10px; align-items: flex-start; margin: 4px 0 16px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
   .switch input { margin-top: 4px; accent-color: var(--accent); width: 16px; height: 16px; flex: none; }
   .switch small { display: block; color: var(--muted); font-size: 12px; }
   .switch:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
-  .result { background: var(--accent-soft); border-radius: 12px; padding: 14px 16px; }
+
+  .result { background: var(--accent-soft); border-radius: 10px; padding: 14px 16px; }
   .result.none { background: var(--bad-bg); }
   .result .label { color: var(--muted); font-size: 13px; }
-  .result .big { font-size: 34px; font-weight: 750; color: var(--accent); line-height: 1.15; }
+  .result .big { font: 800 36px/1.1 var(--display); color: var(--accent); letter-spacing: -.01em; }
   .result.none .big { color: var(--bad); font-size: 22px; }
   .result .sub { color: var(--muted); font-size: 13px; }
-  .result dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 10px 0 0; font-size: 14px; }
-  .result dt { color: var(--muted); } .result dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
-  .note { margin-top: 12px; padding: 10px 12px; border-radius: 10px; font-size: 13px; display: none; }
-  .note.tip { background: var(--warn-bg); color: var(--warn); }
+  .result dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3px 12px; margin: 10px 0 0; font-size: 13px; }
+  .result dt { color: var(--muted); } .result dd { margin: 0; text-align: right; font-family: var(--mono); font-size: 12.5px; }
+  .tight-warn, .note { margin-top: 10px; padding: 8px 10px; border-radius: 8px; font-size: 13px; }
+  .tight-warn, .note.tip { background: var(--warn-bg); color: var(--warn); }
   .note.info { background: var(--ok-soft); color: var(--ok); }
+
+  /* preview */
+  .views { display: grid; grid-template-columns: minmax(0, 1fr) minmax(90px, 170px); gap: 8px; align-items: start; }
   svg { width: 100%; height: auto; display: block; max-height: 70vh; }
-  .views { display: grid; grid-template-columns: 1fr minmax(90px, 170px); gap: 8px; align-items: start; }
-  svg text { fill: var(--ink); font: 12px system-ui, sans-serif; }
+  svg text { fill: var(--ink); font: 12px var(--body); }
   svg .dim { stroke: var(--muted); stroke-width: 1; fill: none; }
   svg .dimtxt { fill: var(--muted); font-size: 12px; }
   svg .grid { stroke: var(--line); stroke-width: 1; }
   .caption { color: var(--muted); font-size: 12px; text-align: center; margin-top: 4px; }
   .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 10px; }
   .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
-  .sizes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
-  .sizes span { padding: 3px 9px; border-radius: 7px; font-size: 13px; font-variant-numeric: tabular-nums; border: 1px solid var(--line); color: var(--muted); opacity: .45; transition: all .2s; }
+  .sizes-h { margin: 16px 0 0; font-size: 13px; color: var(--muted); }
+  .sizes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .sizes span { padding: 2px 8px; border-radius: 6px; font: 500 13px var(--mono); border: 1px solid var(--line); color: var(--muted); opacity: .45; transition: all .2s; }
   .sizes span.fits { opacity: 1; color: var(--ok); border-color: var(--ok); }
   .sizes span.tight { opacity: 1; color: var(--warn); border-color: var(--warn); border-style: dashed; }
-  .sizes span.pick.tight { background: var(--warn); border-color: var(--warn); color: #fff; border-style: solid; }
-  .tight-warn { display: none; margin-top: 10px; padding: 8px 10px; border-radius: 8px; background: var(--warn-bg); color: var(--warn); font-size: 13px; }
-  .sizes span.pick { opacity: 1; background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
-  .sizes-h { margin: 18px 0 0; font-size: 13px; color: var(--muted); }
+  .sizes span.pick { opacity: 1; background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .sizes span.pick.tight { background: var(--warn); border-color: var(--warn); color: var(--card); border-style: solid; }
   details { margin-top: 14px; color: var(--muted); font-size: 13px; }
   details summary { cursor: pointer; }
+  details p, details ul { max-width: 70ch; }
+
+  /* saved products */
+  .products-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .ptools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .ptools .text-in { width: 200px; max-width: 100%; }
+  .backup-box { display: grid; gap: 8px; justify-items: start; margin: 6px 0 12px; }
+  .backup-box textarea { width: 100%; font: 12px var(--mono); resize: vertical; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; font: 600 11px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 6px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tr.active td { background: var(--accent-soft); }
+  td.name { font-weight: 600; min-width: 140px; }
+  td.dims, td.bag { font-family: var(--mono); font-size: 13px; white-space: nowrap; }
+  td.bag b { color: var(--accent); }
+  td.acts { text-align: right; white-space: nowrap; }
+  td.acts .btn + .btn { margin-left: 6px; }
+  .pill { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 999px; background: var(--field); border: 1px solid var(--line); color: var(--muted); margin-left: 6px; vertical-align: 1px; font-weight: 500; }
+  .empty { color: var(--muted); padding: 14px 0 4px; }
+
+  .editor .list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .editor .list span { display: inline-flex; align-items: center; gap: 2px; padding: 1px 3px 1px 9px; border: 1px solid var(--line); border-radius: 7px; font: 500 13px var(--mono); }
+  .editor .list button { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 3px 5px; border-radius: 4px; }
+  .editor .list button:hover { color: var(--bad); background: var(--bad-bg); }
+  .editor .add { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .editor .add input { width: 64px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--field); text-align: right; font-family: var(--mono); }
+  .editor .msg { font-size: 12px; color: var(--muted); min-height: 18px; margin-top: 6px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
 <body>
-<header>
-  <h1>Poly Bag Size Calculator</h1>
-  <p>Slide your product's size and the right courier bag from your size list is picked and drawn live.</p>
-</header>
-
-<main>
-  <section class="card">
-    <h2>Product size</h2>
-    <div class="presets" id="presets"></div>
-
-    <div class="field"><div class="row"><label for="L">Length</label><div class="num"><input id="L-n" type="number" min="1" max="150" step="0.5"><span>cm</span><span class="eq">=</span><input id="L-i" type="number" min="0" max="60" step="0.25" aria-label="in inches"><span>in</span></div></div>
-      <input id="L" type="range" min="1" max="75" step="0.5"></div>
-    <div class="field"><div class="row"><label for="B">Width</label><div class="num"><input id="B-n" type="number" min="1" max="150" step="0.5"><span>cm</span><span class="eq">=</span><input id="B-i" type="number" min="0" max="60" step="0.25" aria-label="in inches"><span>in</span></div></div>
-      <input id="B" type="range" min="1" max="70" step="0.5"></div>
-    <div class="field"><div class="row"><label for="H">Height <small>(thickness)</small></label><div class="num"><input id="H-n" type="number" min="0.1" max="100" step="0.5"><span>cm</span><span class="eq">=</span><input id="H-i" type="number" min="0" max="60" step="0.25" aria-label="in inches"><span>in</span></div></div>
-      <input id="H" type="range" min="0.5" max="40" step="0.5"></div>
-    <div class="field"><div class="row"><label for="M">Extra room <small>(breathing space)</small></label><div class="num"><input id="M-n" type="number" min="0" max="10" step="0.5"><span>cm</span><span class="eq">=</span><input id="M-i" type="number" min="0" max="60" step="0.25" aria-label="in inches"><span>in</span></div></div>
-      <input id="M" type="range" min="0" max="10" step="0.5"></div>
-
-    <label class="switch">
-      <input type="checkbox" id="soft">
-      <span><b>Soft item (clothing)</b><small>Fabric squashes, so height counts at half and the tight-fit rule is off. Use for T-shirts, kurtas, etc. Keep it off for boxes.</small></span>
-    </label>
-
-    <div class="result" id="result">
-      <div class="label">Use this poly bag</div>
-      <div class="big" id="out-size">–</div>
-      <div class="sub" id="out-sub">–</div>
-      <dl>
-        <dt>Width needed</dt><dd id="r-nw"></dd>
-        <dt>Length needed</dt><dd id="r-nl"></dd>
-        <dt>Spare room</dt><dd id="r-spare"></dd>
-        <dt>Product lies</dt><dd id="r-orient"></dd>
-      </dl>
-      <div class="tight-warn" id="tight-warn"></div>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Poly Bag Size Calculator</h1>
+      <p>Enter your product's size in cm or inches and see which courier bag from your size list it packs into, drawn to scale. Save products in this browser to look them up later.</p>
     </div>
-    <div class="note" id="note"></div>
+  </header>
+
+  <main>
+    <section class="card" aria-label="Product size">
+      <div class="savebar">
+        <label for="pname"><h3 style="margin:0">Product name</h3></label>
+        <div class="row">
+          <input id="pname" class="text-in" type="text" maxlength="80" placeholder="e.g. Men's running shoe, size 9" autocomplete="off">
+          <button class="btn" id="save-btn">Save</button>
+        </div>
+        <div class="status" id="save-status" aria-live="polite"></div>
+      </div>
+
+      <h2>Product size</h2>
+      <div class="presets" id="presets"></div>
+
+      <div class="field"><div class="row"><label for="L">Length</label><div class="num"><input id="L-n" type="number" min="1" max="150" step="0.5" aria-label="Length in cm"><span>cm</span><span>=</span><input id="L-i" type="number" min="0" max="60" step="0.25" aria-label="Length in inches"><span>in</span></div></div>
+        <input id="L" type="range" min="1" max="75" step="0.5" aria-label="Length slider"></div>
+      <div class="field"><div class="row"><label for="B">Width</label><div class="num"><input id="B-n" type="number" min="1" max="150" step="0.5" aria-label="Width in cm"><span>cm</span><span>=</span><input id="B-i" type="number" min="0" max="60" step="0.25" aria-label="Width in inches"><span>in</span></div></div>
+        <input id="B" type="range" min="1" max="70" step="0.5" aria-label="Width slider"></div>
+      <div class="field"><div class="row"><label for="H">Height <small>(thickness)</small></label><div class="num"><input id="H-n" type="number" min="0.1" max="100" step="0.5" aria-label="Height in cm"><span>cm</span><span>=</span><input id="H-i" type="number" min="0" max="60" step="0.25" aria-label="Height in inches"><span>in</span></div></div>
+        <input id="H" type="range" min="0.5" max="40" step="0.5" aria-label="Height slider"></div>
+      <div class="field"><div class="row"><label for="M">Extra room <small>(breathing space)</small></label><div class="num"><input id="M-n" type="number" min="0" max="10" step="0.5" aria-label="Extra room in cm"><span>cm</span><span>=</span><input id="M-i" type="number" min="0" max="60" step="0.25" aria-label="Extra room in inches"><span>in</span></div></div>
+        <input id="M" type="range" min="0" max="10" step="0.5" aria-label="Extra room slider"></div>
+
+      <label class="switch">
+        <input type="checkbox" id="soft">
+        <span><b>Soft item (clothing)</b><small>Fabric squashes, so height counts at half and the tight-fit rule is off. Use for T-shirts, kurtas, etc. Keep it off for boxes.</small></span>
+      </label>
+
+      <div class="result" id="result">
+        <div class="label">Use this poly bag</div>
+        <div class="big" id="out-size">–</div>
+        <div class="sub" id="out-sub">–</div>
+        <dl>
+          <dt>Width needed</dt><dd id="r-nw"></dd>
+          <dt>Length needed</dt><dd id="r-nl"></dd>
+          <dt>Spare room</dt><dd id="r-spare"></dd>
+          <dt>Product lies</dt><dd id="r-orient"></dd>
+        </dl>
+        <div class="tight-warn" id="tight-warn" hidden></div>
+      </div>
+      <div class="note" id="note" hidden></div>
+    </section>
+
+    <section class="card" aria-label="Live preview">
+      <h2>Live preview, drawn to scale</h2>
+      <div class="views">
+        <div>
+          <svg id="front" viewBox="0 0 560 600" role="img" aria-label="Front view of the poly bag with the product inside"></svg>
+          <div class="caption">Front view, portrait. Grid squares are 2 inches.</div>
+        </div>
+        <div>
+          <svg id="side" viewBox="0 0 200 600" role="img" aria-label="Side view showing how the bag closes over the product and the flap folds over"></svg>
+          <div class="caption">Side view: how it closes</div>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--bag);border:1px solid var(--bag-edge)"></i>Bag (width × length)</span>
+        <span><i style="background:var(--flap);border:1px solid var(--bag-edge)"></i>2 in flap (extra)</span>
+        <span><i style="background:var(--product);border:1px solid var(--product-edge)"></i>Product</span>
+        <span><i style="border:2px dashed var(--accent)"></i>Bag area the product uses up</span>
+      </div>
+      <div class="sizes-h">Your bag sizes (inches, width × length, flap not included). Green fits comfortably, amber dashed is tight (under ½ in spare), filled is recommended.</div>
+      <div class="sizes" id="sizes"></div>
+      <details>
+        <summary>How is this calculated?</summary>
+        <p>A poly bag is flat, so a product with height (thickness) uses up bag in both directions:</p>
+        <ul>
+          <li><b>Width:</b> the bag wraps around the front, back and both sides, so it needs product width + height.</li>
+          <li><b>Length:</b> the bag pinches shut below the product (half the height) and again above it (the other half) so the mouth lies flat. So it needs product length + height.</li>
+          <li>Plus your <b>extra room</b> on both, and <b>1 cm closing room</b> on the length so the adhesive flap folds over and seals fully.</li>
+        </ul>
+        <p>Example: a 9 × 9 × 9 cm cube needs 18 cm of width and 18 cm of length before extra room, not 9 × 9.
+        Bag film is treated as not stretching: a bag that only fits by stretching tears or pops its seal in transit.</p>
+        <p>The app picks the smallest bag in your list that covers both, trying the product upright and turned sideways.
+        If that bag leaves less than ½ inch spare in either direction, it's flagged as tight and the next size up is recommended.
+        <b>Soft item (clothing)</b> counts height at half and switches the tight-fit rule off.
+        The 2 inch flap is on top of the bag length, the way suppliers quote sizes.</p>
+      </details>
+    </section>
+  </main>
+
+  <section class="card" aria-label="My products">
+    <div class="products-head">
+      <h2 style="margin:0">My products</h2>
+      <div class="ptools">
+        <input id="search" class="text-in" type="search" placeholder="Search products" aria-label="Search saved products">
+        <button class="btn quiet small" id="copy-backup">Copy backup</button>
+        <button class="btn quiet small" id="show-restore">Restore backup</button>
+      </div>
+    </div>
+    <div class="status" id="backup-msg" aria-live="polite"></div>
+    <div class="backup-box" id="backup-box" hidden>
+      <textarea id="backup-text" class="text-in" rows="4" aria-label="Backup text" spellcheck="false"></textarea>
+      <button class="btn small" id="restore-btn" hidden>Restore</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Product</th><th>Size (L × W × H)</th><th>Bag now</th><th></th></tr></thead>
+        <tbody id="plist"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="pempty">No saved products yet. Set a size above, type a product name and press Save.</div>
   </section>
 
-  <section class="card">
-    <h2>Live preview, drawn to scale</h2>
-    <div class="views">
-      <div>
-        <svg id="front" viewBox="0 0 560 600" role="img" aria-label="Front view of the poly bag with the product inside"></svg>
-        <div class="caption">Front view, portrait. Grid squares are 2 inches.</div>
-      </div>
-      <div>
-        <svg id="side" viewBox="0 0 200 600" role="img" aria-label="Side view showing how the bag closes over the product and the flap folds over"></svg>
-        <div class="caption">Side view: how it closes</div>
-      </div>
+  <section class="card editor" aria-label="Your bag sizes">
+    <h2>Your bag sizes</h2>
+    <div class="list" id="edit-list"></div>
+    <div class="add">
+      <input id="add-w" type="number" min="1" max="60" step="1" placeholder="W" aria-label="Bag width in inches"> ×
+      <input id="add-l" type="number" min="1" max="60" step="1" placeholder="L" aria-label="Bag length in inches"> in
+      <button class="btn small" id="add-btn">Add size</button>
+      <span id="reset-wrap"><button class="btn ghost small" id="reset-btn">Reset to default list</button></span>
     </div>
-    <div class="legend">
-      <span><i style="background:var(--bag);border:1px solid var(--bag-edge)"></i>Bag (width × length)</span>
-      <span><i style="background:var(--flap);border:1px solid var(--bag-edge)"></i>2 in flap (extra)</span>
-      <span><i style="background:var(--product);border:1px solid var(--product-edge)"></i>Product</span>
-      <span><i style="border:2px dashed var(--accent)"></i>Bag area the product uses up</span>
-    </div>
-    <div class="sizes-h">Your bag sizes (inches, width × length, flap not included). Green = fits comfortably, amber dashed = tight (under ½ in spare), filled = recommended.</div>
-    <div class="sizes" id="sizes"></div>
-    <details>
-      <summary>How is this calculated?</summary>
-      <p>A poly bag is flat, so a product with height (thickness) uses up bag in <b>both</b> directions:</p>
-      <ul>
-        <li><b>Width:</b> the bag wraps around the front, back and both sides, so it needs <b>product width + height</b>.</li>
-        <li><b>Length:</b> the bag has to pinch shut below the product (half the height) and again above it (the other half) so the mouth lies flat. So it needs <b>product length + height</b>.</li>
-        <li>On top of that: your <b>extra room</b> on both, and <b>1 cm closing room</b> on the length so the mouth lies flat and the adhesive flap folds over and seals fully.</li>
-      </ul>
-      <p>Example: a 9 × 9 × 9 cm cube needs 9 + 9 = 18 cm of width and 9 + 9 = 18 cm of length before extra room, not 9 × 9.
-      Poly bag film is treated as <b>not stretching</b>: a bag that only fits by stretching tears or pops its seal in transit.<br>
-      The app then picks the <b>smallest bag in your list</b> that covers both, trying the product both ways round (portrait and turned sideways).
-      <b>Soft item (clothing)</b> counts the height at half, because folded fabric squashes and moulds to the bag, and switches the tight-fit rule off.
-      Boxes and rigid items should leave it off.<br>
-      If the smallest bag that fits leaves less than ½ inch spare in either direction, it's flagged as tight and the next size up is recommended.
-      The 2 inch flap is on top of the bag length, the same way your supplier quotes sizes.</p>
-    </details>
-    <div class="editor">
-      <h3>Edit your bag sizes</h3>
-      <div class="list" id="edit-list"></div>
-      <div class="add">
-        <input id="add-w" type="number" min="1" max="60" step="1" placeholder="W" aria-label="Bag width in inches"> ×
-        <input id="add-l" type="number" min="1" max="60" step="1" placeholder="L" aria-label="Bag length in inches"> in
-        <button class="btn" id="add-btn">Add size</button>
-        <button class="btn ghost" id="reset-btn">Reset to default list</button>
-      </div>
-      <div class="msg" id="edit-msg">Width × length in inches, flap not included. Changes are saved in this browser.</div>
-    </div>
+    <div class="msg" id="edit-msg">Width × length in inches, flap not included.</div>
   </section>
-</main>
+</div>
 
 <script>
 const IN = 2.54, FLAP = 2;
@@ -184,39 +275,37 @@ const DEFAULT_BAGS = [
   [6,8],[7,10],[8,10],[8,12],[9,12],[10,12],[10,14],[12,14],[12,16],[12,18],[14,16],[14,18],[14,20],
   [16,20],[16,22],[18,20],[18,22],[18,24],[20,22],[20,24],[22,24],[24,24],[24,26],[24,28],[26,28],[28,28],
 ];
-const KEY = 'polybag-sizes';
+const LOCAL_KEY = 'polybag-sizes';
 const sortBags = list => list.sort((a, b) => a[0] * a[1] - b[0] * b[1] || a[0] - b[0]);
-let BAGS = sortBags(loadBags());
-function loadBags() {
+function loadLocalBags() {
   try {
-    const saved = JSON.parse(localStorage.getItem(KEY));
+    const saved = JSON.parse(localStorage.getItem(LOCAL_KEY));
     if (Array.isArray(saved) && saved.length) return saved;
   } catch (e) {}
   return DEFAULT_BAGS.map(b => [...b]);
 }
-function saveBags() { try { localStorage.setItem(KEY, JSON.stringify(BAGS)); } catch (e) {} }
+let BAGS = sortBags(loadLocalBags());
 const maxW = () => Math.max(...BAGS.map(b => b[0]), 6), maxL = () => Math.max(...BAGS.map(b => b[1]), 8) + FLAP;
 const PRESETS = [['T-shirt (folded)', 28, 22, 3, true], ['Kurta (folded)', 35, 28, 4, true], ['9 cm cube', 9, 9, 9],
   ['Phone box', 17, 9, 4], ['Paperback book', 21, 14, 3], ['Shoe box', 33, 20, 12]];
 const state = { L: 30, B: 20, H: 5, M: 1.5, soft: false };
 const $ = id => document.getElementById(id);
 const f1 = n => (Math.round(n * 10) / 10).toString();
+const r2 = n => Math.round(n * 100) / 100;
 
 // ---- sizing ---------------------------------------------------------------
-// need for one orientation: `along` runs top-to-bottom, `across` runs left-to-right
+// need for one orientation: `along` runs top-to-bottom, `across` runs left-to-right.
 // Flat bag around a block: width wraps across + H; length pinches H/2 below and H/2 above, plus room to close.
-const CLOSE = 1;  // cm of flat bag above the product so the flap folds over and seals
+const CLOSE = 1;     // cm of flat bag above the product so the flap folds over and seals
+const TIGHT = 0.5;   // inches: a fit with less spare than this is flagged and the next size up recommended
+const SOFT_H = 0.5;  // soft items (clothing) compress, so height counts at half and tight fits are fine
 function need(along, across, H, M) { return { w: (across + H + M) / IN, l: (along + H + M + CLOSE) / IN, along, across }; }
 const fits = (bag, n) => bag[0] >= n.w - 1e-9 && bag[1] >= n.l - 1e-9;
-// A bag that fits by less than this (in either direction) is flagged as tight and the next size up is recommended.
-const TIGHT = 0.5;  // inches
-// Soft items (clothing) compress, so their height only takes up part of the bag, and tight fits are fine.
-const SOFT_H = 0.5;
-const effH = () => state.soft ? state.H * SOFT_H : state.H;
-const tightLimit = () => state.soft ? 0 : TIGHT;
-const comfy = (bag, n) => bag[0] - n.w >= tightLimit() - 1e-9 && bag[1] - n.l >= tightLimit() - 1e-9;
-function choose(L, B, H, M) {
-  const opts = [need(L, B, H, M), need(B, L, H, M)];  // portrait, or turned 90°
+const roomy = (bag, n, t) => bag[0] - n.w >= t - 1e-9 && bag[1] - n.l >= t - 1e-9;
+// p = {L, B, H, M, soft}; H is the real height, softness applied here
+function choose(p) {
+  const H = p.soft ? p.H * SOFT_H : p.H, t = p.soft ? 0 : TIGHT;
+  const opts = [need(p.L, p.B, H, p.M), need(p.B, p.L, H, p.M)];  // upright, or turned 90°
   const smallest = test => {
     let r = null;
     for (const n of opts) {
@@ -225,20 +314,18 @@ function choose(L, B, H, M) {
     }
     return r;
   };
-  const fit = smallest(fits), roomy = smallest(comfy);
-  if (roomy) return { best: roomy, tight: fit && fit.bag !== roomy.bag ? fit : null, opts };
-  return { best: fit, tight: null, tightOnly: !!fit, opts };  // only tight fits exist (or nothing fits)
+  const fit = smallest(fits), comfy = smallest((b, n) => roomy(b, n, t));
+  if (comfy) return { best: comfy, tight: fit && fit.bag !== comfy.bag ? fit : null, opts, H, t };
+  return { best: fit, tight: null, tightOnly: !!fit, opts, H, t };
 }
 
 // ---- rendering ------------------------------------------------------------
 let shown = null, goal = null;
 function computeGoal() {
-  const { L, B, M } = state, H = effH();
-  const { best, tight, tightOnly, opts } = choose(L, B, H, M);
-  const n = best ? best.n : opts[0];
+  const c = choose(state), n = c.best ? c.best.n : c.opts[0];
   // when nothing fits, draw the exact custom size needed
-  const W = best ? best.bag[0] : Math.ceil(n.w), BL = best ? best.bag[1] : Math.ceil(n.l);
-  return { best, tight, tightOnly, opts, v: { W, BL, nw: n.w, nl: n.l, pw: n.across / IN, pl: n.along / IN, ph: effH() / IN } };
+  const W = c.best ? c.best.bag[0] : Math.ceil(n.w), BL = c.best ? c.best.bag[1] : Math.ceil(n.l);
+  return { ...c, v: { W, BL, nw: n.w, nl: n.l, pw: n.across / IN, pl: n.along / IN, ph: c.H / IN } };
 }
 function draw(v) {
   const VW = 560, VH = 600, pad = 50;
@@ -273,7 +360,7 @@ function draw(v) {
 function drawSide(v, k, yBottom, yMouth, bf, pl) {
   const t = v.ph * k, SW = Math.max(150, t + 110), cx = SW / 2;
   const boxB = yBottom - t / 2, boxT = boxB - pl, apex = boxT - t / 2;
-  const short = yMouth > apex + 0.5;                   // bag too short: mouth can't close flat
+  const short = yMouth > apex + 0.5;                        // bag too short: mouth can't close flat
   const open = short ? Math.min(t / 2, yMouth - apex) : 0;  // half-gap left at the mouth
   const panel = s => `M ${cx} ${yBottom} L ${cx + s * t / 2} ${boxB} L ${cx + s * t / 2} ${boxT} L ${cx + s * open} ${short ? yMouth : apex} L ${cx + s * open} ${yMouth}`;
   const r = 5, ok = short ? 'var(--bad)' : 'var(--ok)';
@@ -295,8 +382,9 @@ function drawSide(v, k, yBottom, yMouth, bf, pl) {
     <text x="${cx}" y="${top + 18}" text-anchor="middle" style="fill:${ok};font-weight:600">${short ? 'won\'t close' : 'closes & seals'}</text>
     <text x="${cx}" y="${yBottom + 18}" text-anchor="middle" class="dimtxt">bottom seam</text>`;
 }
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function animate() {
-  if (!shown) shown = { ...goal.v };
+  if (!shown || reduceMotion) shown = { ...goal.v };
   let moving = false;
   for (const key in goal.v) {
     const d = goal.v[key] - shown[key];
@@ -307,26 +395,24 @@ function animate() {
 }
 function update() {
   goal = computeGoal();
-  const { best, tight, tightOnly, opts } = goal, { L, B, M } = state, H = effH();
+  const { best, tight, tightOnly, opts, H } = goal, { L, B, M } = state;
   const n = best ? best.n : opts[0];
-  const res = $('result');
-  res.classList.toggle('none', !best);
+  $('result').classList.toggle('none', !best);
+  const tw = $('tight-warn'); tw.hidden = true;
   if (best) {
     const [w, l] = best.bag;
     $('out-size').textContent = `${w} × ${l} in`;
     $('out-sub').textContent = `+ 2 in flap · ${f1(w * IN)} × ${f1(l * IN)} cm (${f1((l + FLAP) * IN)} cm with flap)`;
     $('r-spare').textContent = `${f1(w - n.w)} in wide · ${f1(l - n.l)} in long`;
-    const tw = $('tight-warn');
     if (tight) {
       const sp = Math.min(tight.bag[0] - tight.n.w, tight.bag[1] - tight.n.l);
-      tw.style.display = 'block';
+      tw.hidden = false;
       tw.textContent = `${tight.bag[0]} × ${tight.bag[1]} technically fits, but with only ${f1(sp)} in to spare. That's too tight to pack and seal reliably, so the next size up is recommended.`;
     } else if (tightOnly) {
-      tw.style.display = 'block';
+      tw.hidden = false;
       tw.textContent = `Tight fit: only ${f1(Math.min(w - n.w, l - n.l))} in to spare, and there's no bigger size in your list. Test-pack one before using it.`;
-    } else tw.style.display = 'none';
+    }
   } else {
-    $('tight-warn').style.display = 'none';
     $('out-size').textContent = 'No size in your list fits';
     $('out-sub').textContent = `Needs a custom bag of at least ${f1(n.w)} × ${f1(n.l)} in + flap, or a box.`;
     $('r-spare').textContent = '–';
@@ -336,33 +422,32 @@ function update() {
   $('r-nl').textContent = `${f1(n.along)} + ${hTxt} + ${f1(M)} + ${CLOSE} = ${f1(n.l * IN)} cm (${f1(n.l)} in)`;
   $('r-orient').textContent = best && best.turned ? 'turned sideways' : 'upright (length top to bottom)';
 
-  // size chips
   $('sizes').innerHTML = BAGS.map(b => {
     const cls = best && b === best.bag ? (tightOnly ? 'pick tight' : 'pick')
-      : opts.some(o => comfy(b, o)) ? 'fits' : opts.some(o => fits(b, o)) ? 'tight' : '';
+      : opts.some(o => roomy(b, o, goal.t)) ? 'fits' : opts.some(o => fits(b, o)) ? 'tight' : '';
     return `<span class="${cls}">${b[0]}×${b[1]}</span>`;
   }).join('');
 
   // advice: would a different thickness side give a smaller bag?
-  const note = $('note'); note.style.display = 'none';
+  const note = $('note'); note.hidden = true;
   const area = r => r ? r.bag[0] * r.bag[1] : Infinity;
-  const alts = state.soft ? [] : [['length', choose(B, H, L, M).best], ['width', choose(L, H, B, M).best]];
+  const alts = state.soft ? [] : [['length', choose({ ...state, L: B, B: H, H: L }).best], ['width', choose({ ...state, B: H, H: B }).best]];
   const better = alts.filter(([, r]) => area(r) < area(best)).sort((a, b) => area(a[1]) - area(b[1]))[0];
   if (better) {
-    note.className = 'note tip'; note.style.display = 'block';
+    note.className = 'note tip'; note.hidden = false;
     note.textContent = `Tip: if the product can be packed with its ${better[0]} as the thickness instead, a ${better[1].bag[0]} × ${better[1].bag[1]} in bag is enough.`;
   } else if (!state.soft && H > Math.min(L, B)) {
-    note.className = 'note tip'; note.style.display = 'block';
+    note.className = 'note tip'; note.hidden = false;
     note.textContent = 'Heads-up: this product is thicker than it is wide. A flat poly bag will bulge; a box or padded mailer may protect it better.';
   } else if (best && best.turned) {
-    note.className = 'note info'; note.style.display = 'block';
+    note.className = 'note info'; note.hidden = false;
     note.textContent = 'Turning the product sideways inside the bag lets you use a smaller size.';
   }
+  renderProducts();  // "Bag now" column follows the size list
   requestAnimationFrame(animate);
 }
 
-// ---- wiring ---------------------------------------------------------------
-const r2 = n => Math.round(n * 100) / 100;
+// ---- inputs ---------------------------------------------------------------
 function set(id, cm, from) {
   cm = parseFloat(cm); if (!isFinite(cm)) return;
   state[id] = Math.max(id === 'M' ? 0 : 0.1, cm);
@@ -371,48 +456,181 @@ function set(id, cm, from) {
   if (from !== $(id + '-i')) $(id + '-i').value = r2(state[id] / IN);
   update();
 }
+function setSoft(v) { $('soft').checked = state.soft = !!v; }
 ['L', 'B', 'H', 'M'].forEach(id => {
   $(id).addEventListener('input', e => set(id, e.target.value, e.target));
   $(id + '-n').addEventListener('input', e => { if (e.target.value !== '') set(id, e.target.value, e.target); });
   $(id + '-i').addEventListener('input', e => { if (e.target.value !== '') set(id, e.target.value * IN, e.target); });
-  // tidy the typed box once the user leaves it
   [$(id + '-n'), $(id + '-i')].forEach(el => el.addEventListener('change', () => set(id, state[id])));
-  set(id, state[id]);
+});
+$('soft').addEventListener('change', e => { state.soft = e.target.checked; update(); });
+PRESETS.forEach(([name, l, b, h, soft = false]) => {
+  const btn = document.createElement('button'); btn.textContent = name;
+  btn.onclick = () => { setSoft(soft); set('L', l); set('B', b); set('H', h); };
+  $('presets').appendChild(btn);
+});
+
+// ---- saved products (kept in this browser) ----------------------------------
+const PRODUCTS_KEY = 'pb-products';
+let products = [], activeId = null, pendingDelete = null;
+function readProducts() {
+  try { const v = JSON.parse(localStorage.getItem(PRODUCTS_KEY)); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+}
+function writeProducts() {
+  try { localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products)); return true; }
+  catch (e) { status("Couldn't save: this browser is blocking storage (private mode?).", 'bad'); return false; }
+}
+const sortProducts = () => products.sort((a, b) => b.updatedAt - a.updatedAt);
+const newId = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+function status(text, kind = '') { const s = $('save-status'); s.textContent = text; s.className = 'status ' + kind; }
+function editMsg(text) { $('edit-msg').textContent = text; }
+const findByName = name => products.find(p => String(p.name).toLowerCase() === String(name).toLowerCase());
+
+$('save-btn').addEventListener('click', () => {
+  const name = $('pname').value.trim();
+  if (!name) { status('Type a product name first.', 'bad'); $('pname').focus(); return; }
+  const body = { name, L: state.L, B: state.B, H: state.H, M: state.M, soft: state.soft, updatedAt: Date.now() };
+  // same name (ignoring case) updates that product instead of making a duplicate
+  const existing = findByName(name);
+  if (existing) Object.assign(existing, body); else products.push({ id: newId(), ...body });
+  activeId = (existing || products[products.length - 1]).id;
+  sortProducts();
+  if (writeProducts()) status(existing ? `Updated "${name}".` : `Saved "${name}".`, 'ok');
+  renderProducts();
+});
+$('pname').addEventListener('keydown', e => { if (e.key === 'Enter') $('save-btn').click(); });
+
+function loadProduct(p) {
+  activeId = p.id;
+  $('pname').value = p.name;
+  setSoft(p.soft);
+  set('M', p.M ?? 1.5); set('L', p.L); set('B', p.B); set('H', p.H);
+  status(`Opened "${p.name}". Change the size and press Save to update it.`, 'ok');
+  window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+}
+function deleteProduct(p) {
+  products = products.filter(x => x.id !== p.id);
+  if (activeId === p.id) activeId = null;
+  if (writeProducts()) status(`Deleted "${p.name}".`, 'ok');
+  renderProducts();
+}
+function renderProducts() {
+  const body = $('plist'); if (!body) return;
+  const q = $('search').value.trim().toLowerCase();
+  const rows = products.filter(p => !q || String(p.name).toLowerCase().includes(q));
+  body.replaceChildren();
+  $('pempty').hidden = rows.length > 0;
+  $('pempty').textContent = q && !rows.length ? `No saved product matches "${$('search').value.trim()}".`
+    : 'No saved products yet. Set a size above, type a product name and press Save.';
+  for (const p of rows) {
+    const tr = document.createElement('tr'); if (p.id === activeId) tr.className = 'active';
+    const c = choose({ L: +p.L, B: +p.B, H: +p.H, M: +(p.M ?? 1.5), soft: !!p.soft });
+    const name = document.createElement('td'); name.className = 'name'; name.textContent = p.name;
+    if (p.soft) { const s = document.createElement('span'); s.className = 'pill'; s.textContent = 'soft'; name.append(s); }
+    const dims = document.createElement('td'); dims.className = 'dims';
+    dims.textContent = `${f1(p.L)} × ${f1(p.B)} × ${f1(p.H)} cm`;
+    const bag = document.createElement('td'); bag.className = 'bag';
+    if (c.best) { const b = document.createElement('b'); b.textContent = `${c.best.bag[0]} × ${c.best.bag[1]} in`; bag.append(b); }
+    else bag.textContent = 'none fits';
+    const acts = document.createElement('td'); acts.className = 'acts';
+    const open = document.createElement('button'); open.className = 'btn quiet small'; open.textContent = 'Open';
+    open.onclick = () => loadProduct(p);
+    const del = document.createElement('button');
+    const confirming = pendingDelete === p.id;
+    del.className = confirming ? 'btn danger small' : 'btn quiet small';
+    del.textContent = confirming ? 'Confirm delete' : 'Delete';
+    del.onclick = () => {
+      if (pendingDelete === p.id) { pendingDelete = null; deleteProduct(p); }
+      else { pendingDelete = p.id; renderProducts(); setTimeout(() => { if (pendingDelete === p.id) { pendingDelete = null; renderProducts(); } }, 4000); }
+    };
+    acts.append(open, del);
+    tr.append(name, dims, bag, acts);
+    body.append(tr);
+  }
+}
+$('search').addEventListener('input', renderProducts);
+
+// ---- backup: move products and bag sizes to another device as text ----------
+function backupText() {
+  return JSON.stringify({ app: 'polybag-calculator', v: 1, products: products.map(({ id, ...p }) => p), bags: BAGS });
+}
+function backupMsg(text, kind = '') { const m = $('backup-msg'); m.textContent = text; m.className = 'status ' + kind; }
+$('copy-backup').addEventListener('click', async () => {
+  const text = backupText();
+  $('backup-box').hidden = false; $('restore-btn').hidden = true;
+  $('backup-text').value = text;
+  try {
+    await navigator.clipboard.writeText(text);
+    backupMsg(`Copied ${products.length} product${products.length === 1 ? '' : 's'} and your bag sizes. Paste it into WhatsApp, email or notes to keep it safe, then use "Restore backup" on the other device.`, 'ok');
+  } catch (e) {
+    $('backup-text').select();
+    backupMsg('Select all the text below and copy it, then paste it somewhere safe.');
+  }
+});
+$('show-restore').addEventListener('click', () => {
+  $('backup-box').hidden = false; $('restore-btn').hidden = false;
+  $('backup-text').value = ''; $('backup-text').focus();
+  backupMsg('Paste a backup here, then press Restore. Products with the same name are replaced by the backup copy.');
+});
+$('restore-btn').addEventListener('click', () => {
+  let data;
+  try { data = JSON.parse($('backup-text').value.trim()); } catch (e) { data = null; }
+  if (!data || data.app !== 'polybag-calculator' || !Array.isArray(data.products)) {
+    backupMsg("That doesn't look like a backup from this calculator. Copy the whole text and try again.", 'bad'); return;
+  }
+  let added = 0, replaced = 0;
+  for (const p of data.products) {
+    if (!p || !p.name || !(+p.L > 0 && +p.B > 0 && +p.H > 0)) continue;
+    const clean = { name: String(p.name).slice(0, 80), L: +p.L, B: +p.B, H: +p.H, M: +(p.M ?? 1.5), soft: !!p.soft, updatedAt: +p.updatedAt || Date.now() };
+    const existing = findByName(clean.name);
+    if (existing) { Object.assign(existing, clean); replaced++; } else { products.push({ id: newId(), ...clean }); added++; }
+  }
+  if (Array.isArray(data.bags)) {
+    const bags = data.bags.map(b => [Number(b[0]), Number(b[1])]).filter(b => b[0] > 0 && b[1] > 0);
+    if (bags.length) { BAGS = sortBags(bags); persistBags(); renderEditor(); }
+  }
+  sortProducts(); writeProducts(); renderProducts(); update();
+  $('backup-box').hidden = true;
+  backupMsg(`Restored: ${added} new, ${replaced} updated. Your bag sizes were replaced with the ones in the backup.`, 'ok');
 });
 
 // ---- size list editor -------------------------------------------------------
+function persistBags() { try { localStorage.setItem(LOCAL_KEY, JSON.stringify(BAGS)); } catch (e) {} }
 function renderEditor() {
   $('edit-list').innerHTML = BAGS.map((b, i) =>
     `<span>${b[0]}×${b[1]}<button data-i="${i}" aria-label="Remove ${b[0]} by ${b[1]}">×</button></span>`).join('');
 }
-function changed(msg) { sortBags(BAGS); saveBags(); renderEditor(); update(); $('edit-msg').textContent = msg; }
+function changed(msg) { sortBags(BAGS); persistBags(); renderEditor(); update(); editMsg(msg); }
 $('edit-list').addEventListener('click', e => {
   const i = e.target.dataset.i; if (i === undefined) return;
-  if (BAGS.length === 1) { $('edit-msg').textContent = 'Keep at least one size in the list.'; return; }
+  if (BAGS.length === 1) { editMsg('Keep at least one size in the list.'); return; }
   const [b] = BAGS.splice(+i, 1);
   changed(`Removed ${b[0]}×${b[1]}.`);
 });
 $('add-btn').addEventListener('click', () => {
   const w = parseFloat($('add-w').value), l = parseFloat($('add-l').value);
-  if (!(w > 0 && l > 0)) { $('edit-msg').textContent = 'Enter both width and length in inches.'; return; }
-  if (BAGS.some(b => b[0] === w && b[1] === l)) { $('edit-msg').textContent = `${w}×${l} is already in the list.`; return; }
+  if (!(w > 0 && l > 0)) { editMsg('Enter both width and length in inches.'); return; }
+  if (BAGS.some(b => b[0] === w && b[1] === l)) { editMsg(`${w}×${l} is already in the list.`); return; }
   BAGS.push([w, l]); $('add-w').value = $('add-l').value = '';
   changed(`Added ${w}×${l}.`);
 });
 ['add-w', 'add-l'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') $('add-btn').click(); }));
-$('reset-btn').addEventListener('click', () => {
-  if (!confirm('Replace your list with the default sizes?')) return;
-  BAGS = sortBags(DEFAULT_BAGS.map(b => [...b]));
-  changed('Reset to the default list.');
+$('reset-wrap').addEventListener('click', e => {
+  const wrap = $('reset-wrap');
+  if (e.target.id === 'reset-btn') {
+    wrap.innerHTML = 'Replace your list with the default sizes? <button class="btn danger small" id="reset-yes">Reset</button> <button class="btn quiet small" id="reset-no">Cancel</button>';
+  } else if (e.target.id === 'reset-yes' || e.target.id === 'reset-no') {
+    if (e.target.id === 'reset-yes') { BAGS = sortBags(DEFAULT_BAGS.map(b => [...b])); changed('Reset to the default list.'); }
+    wrap.innerHTML = '<button class="btn ghost small" id="reset-btn">Reset to default list</button>';
+  }
 });
-$('soft').addEventListener('change', e => { state.soft = e.target.checked; update(); });
-state.soft = $('soft').checked; update();  // browsers may restore the checkbox on reload
+
+// ---- start ------------------------------------------------------------------
+products = readProducts(); sortProducts();
+setSoft($('soft').checked);  // browsers may restore the checkbox
+['L', 'B', 'H', 'M'].forEach(id => set(id, state[id]));
 renderEditor();
-PRESETS.forEach(([name, l, b, h, soft = false]) => {
-  const btn = document.createElement('button'); btn.textContent = name;
-  btn.onclick = () => { $('soft').checked = state.soft = soft; set('L', l); set('B', b); set('H', h); };
-  $('presets').appendChild(btn);
-});
+status('Products you save are kept in this browser. Use "Copy backup" below to move them to another device.');
 </script>
 </body>
 </html>
