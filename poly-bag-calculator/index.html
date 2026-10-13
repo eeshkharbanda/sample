@@ -60,6 +60,8 @@
   .hook { margin: 0; font: 800 clamp(40px, 9vw, 64px)/.95 var(--display); letter-spacing: -.02em; text-transform: uppercase; color: var(--accent); }
   .hero h1 { font-size: clamp(20px, 4.2vw, 28px); max-width: 38ch; }
   .hero .lead { max-width: 60ch; }
+  .delivery { margin: 6px 0 0; display: flex; align-items: flex-start; gap: 10px; width: fit-content; max-width: 100%; padding: 9px 14px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); font-size: 14px; }
+  .delivery svg { width: 22px; height: 22px; flex: none; color: var(--wa); margin-top: 1px; }
   .btn { border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); border-radius: 8px; padding: 8px 14px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
   .btn.quiet { border-color: var(--line); background: transparent; color: var(--ink); font-weight: 500; }
   .btn.small { padding: 4px 10px; font-size: 13px; }
@@ -114,6 +116,7 @@
   details.calc dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3px 12px; margin: 8px 0 0; }
   details.calc dd { margin: 0; text-align: right; font: 12.5px var(--mono); color: var(--ink); }
   details.calc .room { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
+  details.calc .room-note { margin: 6px 0 0; font-size: 12px; }
   details.calc .room input { width: 70px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); text-align: right; font: 13px var(--mono); }
 
   /* packing picture */
@@ -190,7 +193,7 @@
   <div class="brand">
     <div class="brand-id">
       <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="3" y="7" width="42" height="38" rx="7" fill="var(--accent)"/><rect x="3" y="3" width="42" height="10" rx="4" fill="var(--bag-edge)"/><text x="24" y="35" text-anchor="middle" font-family="Archivo, Arial, sans-serif" font-weight="800" font-size="22" letter-spacing="-.5" fill="#ffffff">AP</text></svg>
-      <div><div class="brand-name">Arora Plastic Company</div><div class="brand-sub">Poly bags &amp; courier bags · Sadar Bazaar, Delhi</div></div>
+      <div><div class="brand-name">Arora Plastic Company</div><div class="brand-sub">Poly bags &amp; courier bags · Sadar Bazaar, Delhi · Home delivery</div></div>
     </div>
     <div class="brand-actions">
       <a class="btn quiet" href="tel:+919625364124"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-phone"/></svg>Call Vasu · 96253 64124</a>
@@ -202,6 +205,7 @@
     <p class="hook">Size matters.</p>
     <h1>No need to worry about finding the perfect bag size for your product!</h1>
     <p class="lead">Enter your product's size and we'll pick the right poly bag in seconds: not too tight to seal, not so big it looks sloppy.</p>
+    <p class="delivery"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-truck"/></svg><span><b>We deliver to your doorstep.</b> Order on WhatsApp and get your bags home-delivered. Ask Vasu about your area.</span></p>
   </header>
 
   <main>
@@ -247,15 +251,16 @@
         <div class="sub" id="out-sub"></div>
         <div class="tight" id="tight" hidden></div>
         <a class="btn wa" id="order-wa" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg><span id="order-label">Order on WhatsApp</span></a>
-        <small>from Arora Plastic Company · or call Vasu: <a href="tel:+919625364124">96253 64124</a></small>
+        <small>Home delivery available · or call Vasu: <a href="tel:+919625364124">96253 64124</a></small>
         <details class="calc">
-          <summary>Show calculation</summary>
+          <summary>Show calculation and extra room</summary>
           <dl>
             <dt>Width needed</dt><dd id="r-nw"></dd>
             <dt>Length needed</dt><dd id="r-nl"></dd>
             <dt>Spare room</dt><dd id="r-spare"></dd>
           </dl>
           <div class="room"><label for="M-n">Extra room around the product</label><span><input id="M-n" type="number" min="0" max="10" step="0.5"> cm</span></div>
+          <p class="room-note">More room means a bigger bag. The spare length folds down over the product and the flap sticks lower, as the packing picture shows.</p>
         </details>
       </div>
     </section>
@@ -301,6 +306,7 @@
       <h2>Visit our shop</h2>
       <h3>Arora Plastic Company</h3>
       <p>Poly bags, courier bags and packaging · Sadar Bazaar, Delhi</p>
+      <p><b>Can't come to the shop?</b> We do home delivery. Message Vasu with your area.</p>
       <p>Contact: <b>Vasu</b><br><a class="phone" href="tel:+919625364124">96253 64124</a></p>
       <div class="visit-actions">
         <a class="btn" href="https://maps.app.goo.gl/f4fRcyAyXy6nwa7E6" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pin"/></svg>Get directions</a>
@@ -338,6 +344,7 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-phone" viewBox="0 0 24 24"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"/></symbol>
   <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.3-.5-.5-1-1.1-1.3-1.7-.1-.2 0-.4.1-.5l.4-.4.2-.4v-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.6.6-.9 1.3-.9 2.1 0 .9.4 1.8 1 2.5 1.1 1.5 2.4 2.7 4.1 3.4 1.6.7 2.2.6 2.6.5.6-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1l-.4-.2z"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path fill="currentColor" d="M3 5h11v3h3.6l3.4 4.2V17h-2.1a2.5 2.5 0 0 1-4.8 0H9.9a2.5 2.5 0 0 1-4.8 0H3V5zm11 5v3h5l-2.4-3H14zM7.5 16.2a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9.6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></symbol>
 </svg>
 
@@ -405,6 +412,7 @@ function draw(v) {
   for (let g = 0; g * k <= VH; g += 2) grid += `<line class="grid" x1="0" x2="${VW}" y1="${VH - pad - g * k}" y2="${VH - pad - g * k}"/>`;
   const pw = v.pw * k, pl = v.pl * k;
   const px = x0 + (bw - pw) / 2, py = y0 + bf + bl - (v.ph / 2) * k - pl;
+  const foldY = py - (v.ph / 2) * k;  // where the bag closes above the product; anything above folds down
   $('front').innerHTML = `${grid}
     <rect x="${x0}" y="${y0 + bf}" width="${bw}" height="${bl}" rx="4" fill="var(--bag)" stroke="var(--bag-edge)" stroke-width="2"/>
     <rect x="${x0}" y="${y0}" width="${bw}" height="${bf}" rx="4" fill="var(--flap)" stroke="var(--bag-edge)" stroke-width="2"/>
@@ -419,27 +427,56 @@ function draw(v) {
     <line class="dim" x1="${x0 - 16}" x2="${x0 - 16}" y1="${y0 + bf}" y2="${y0 + bf + bl}"/>
     <line class="dim" x1="${x0 - 22}" x2="${x0 - 10}" y1="${y0 + bf}" y2="${y0 + bf}"/>
     <line class="dim" x1="${x0 - 22}" x2="${x0 - 10}" y1="${y0 + bf + bl}" y2="${y0 + bf + bl}"/>
-    <text class="dimtxt" transform="translate(${x0 - 24} ${y0 + bf + bl / 2}) rotate(-90)" text-anchor="middle">${f1(v.BL)} in</text>`;
+    <text class="dimtxt" transform="translate(${x0 - 24} ${y0 + bf + bl / 2}) rotate(-90)" text-anchor="middle">${f1(v.BL)} in</text>
+    ${foldY - (y0 + bf) > 8 ? `<line x1="${x0}" x2="${x0 + bw}" y1="${foldY}" y2="${foldY}" stroke="var(--bag-edge)" stroke-width="2" stroke-dasharray="8 6"/>
+      <text x="${x0 + bw - 8}" y="${foldY - 7}" text-anchor="end" class="dimtxt">folds here ↓</text>` : ''}`;
   drawSide(v, k, y0 + bf + bl, y0 + bf, bf, pl);
 }
-// Side view: product edge-on, bag pinched to a seam below it, closed flat above it, flap folded over the front.
+// Side view: product edge-on. The bag pinches to a seam below it and closes flat above it; any spare
+// length (from extra room or a bigger bag) folds down over the front, so the sticky flap lands lower down.
 function drawSide(v, k, yBottom, yMouth, bf, pl) {
-  const t = v.ph * k, SW = Math.max(150, t + 110), cx = SW / 2;
+  const t = v.ph * k, SW = Math.max(160, t + 120), cx = SW / 2 + 12;
   const boxB = yBottom - t / 2, boxT = boxB - pl, apex = boxT - t / 2;
-  const short = yMouth > apex + 0.5;
+  const short = yMouth > apex + 0.5;                    // bag too short: the mouth can't close
   const open = short ? Math.min(t / 2, yMouth - apex) : 0;
-  const panel = s => `M ${cx} ${yBottom} L ${cx + s * t / 2} ${boxB} L ${cx + s * t / 2} ${boxT} L ${cx + s * open} ${short ? yMouth : apex} L ${cx + s * open} ${yMouth}`;
-  const r = 5, ok = short ? 'var(--bad)' : 'var(--ok)';
-  const flap = short
-    ? `M ${cx + open} ${yMouth} L ${cx + open} ${yMouth - bf}`
-    : `M ${cx} ${yMouth} A ${r} ${r} 0 0 0 ${cx - 2 * r} ${yMouth} L ${cx - 2 * r} ${yMouth + bf}`;
-  const top = yMouth - (short ? bf : 0) - 34, h = yBottom + 26 - top;
+  const top = (short ? yMouth - bf : apex) - 34, h = yBottom + 26 - top;
+  const panel = s => `M ${cx} ${yBottom} L ${cx + s * t / 2} ${boxB} L ${cx + s * t / 2} ${boxT} L ${cx + s * open} ${short ? yMouth : apex}` + (short ? ` L ${cx + s * open} ${yMouth}` : '');
+  let fold = '', flap, flapMid = null;
+  if (short) {
+    flap = `M ${cx + open} ${yMouth} L ${cx + open} ${yMouth - bf}`;
+  } else {
+    // the closed top (spare length, then the flap) lies along the front: down the slope, then down the face
+    const g = 5, route = [[cx, apex], [cx - t / 2 - g, boxT], [cx - t / 2 - g, boxB], [cx - t / 2 - g, yBottom + 20]];
+    const spare = apex - yMouth;
+    const cut = (from, to) => {                          // the part of the route between two distances along it
+      const out = []; let d = 0;
+      for (let i = 1; i < route.length; i++) {
+        const [x1, y1] = route[i - 1], [x2, y2] = route[i], len = Math.hypot(x2 - x1, y2 - y1);
+        const a = Math.max(from, d), b = Math.min(to, d + len);
+        if (b > a) {
+          const p = u => [x1 + (x2 - x1) * (u - d) / len, y1 + (y2 - y1) * (u - d) / len];
+          if (!out.length) out.push(p(a));
+          out.push(p(b));
+        }
+        d += len;
+      }
+      return out;
+    };
+    const path = pts => pts.length > 1 ? 'M ' + pts.map(p => p.join(' ')).join(' L ') : '';
+    fold = path(cut(0, spare));
+    const fp = cut(spare, spare + bf);
+    flap = path(fp);
+    if (fp.length) flapMid = fp[Math.floor(fp.length / 2)];
+  }
+  const ok = short ? 'var(--bad)' : 'var(--ok)';
   $('side').setAttribute('viewBox', `0 ${top} ${SW} ${h}`);
   $('side').innerHTML = `
     <rect x="${cx - t / 2}" y="${boxT}" width="${t}" height="${pl}" rx="2" fill="var(--product)" stroke="var(--product-edge)" stroke-width="2"/>
     <path d="${panel(1)}" fill="none" stroke="var(--bag-edge)" stroke-width="2.5" stroke-linejoin="round"/>
     <path d="${panel(-1)}" fill="none" stroke="var(--bag-edge)" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="${flap}" fill="none" stroke="${ok}" stroke-width="4" stroke-linecap="round"/>
+    ${fold ? `<path d="${fold}" fill="none" stroke="var(--bag-edge)" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>` : ''}
+    <path d="${flap}" fill="none" stroke="${ok}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${flapMid ? `<text x="${flapMid[0] - 8}" y="${flapMid[1] + 4}" text-anchor="end" class="dimtxt" style="fill:var(--ok);font-weight:600">flap</text>` : ''}
     <text x="${cx}" y="${top + 18}" text-anchor="middle" style="fill:${ok};font-weight:600">${short ? "won't close" : 'sealed'}</text>
     <text x="${cx}" y="${yBottom + 18}" text-anchor="middle" class="dimtxt">bottom</text>`;
 }
@@ -487,8 +524,8 @@ function update() {
   const name = $('pname').value.trim();
   const product = `${name ? name + ', ' : ''}${f1(state.L)} × ${f1(state.B)} × ${f1(state.H)} cm${state.soft ? ' (clothing)' : ''}`;
   const msg = best
-    ? `Hi Vasu, I need poly bags of size ${best.bag[0]} × ${best.bag[1]} inch (+ 2 inch flap) from Arora Plastic Company.\nProduct: ${product}\nQuantity: `
-    : `Hi Vasu, I need a custom poly bag of at least ${f1(n.w)} × ${f1(n.l)} inch (+ 2 inch flap).\nProduct: ${product}\nQuantity: `;
+    ? `Hi Vasu, I need poly bags of size ${best.bag[0]} × ${best.bag[1]} inch (+ 2 inch flap) from Arora Plastic Company.\nProduct: ${product}\nQuantity: \nHome delivery to (area / pincode): `
+    : `Hi Vasu, I need a custom poly bag of at least ${f1(n.w)} × ${f1(n.l)} inch (+ 2 inch flap).\nProduct: ${product}\nQuantity: \nHome delivery to (area / pincode): `;
   $('order-wa').href = $('pin-order').href = waLink(msg);
   $('order-label').textContent = best ? `Order ${best.bag[0]} × ${best.bag[1]} bags on WhatsApp` : 'Ask for a custom size on WhatsApp';
 
