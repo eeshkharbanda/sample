@@ -153,7 +153,11 @@
   .visit p { margin: 0 0 12px; color: var(--muted); }
   .visit .phone { font: 600 18px var(--mono); color: var(--ink); text-decoration: none; }
   .visit-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-  .map { width: 100%; min-height: 280px; height: 100%; border: 1px solid var(--line); border-radius: 10px; background: var(--field); }
+  .map-card { position: relative; display: block; min-height: 240px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; color: var(--ink); text-decoration: none; }
+  .map-card svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .map-label { position: absolute; left: 12px; right: 12px; bottom: 12px; display: grid; gap: 2px; padding: 10px 12px; border-radius: 8px; background: var(--card); box-shadow: 0 4px 14px rgba(10, 20, 40, .15); }
+  .map-label span { color: var(--accent); font-size: 13px; font-weight: 500; }
+  .map-card:hover .map-label { outline: 2px solid var(--accent); }
   footer { text-align: center; color: var(--muted); font-size: 13px; padding-top: 4px; }
   footer a { color: inherit; }
 
@@ -294,15 +298,27 @@
       <p>Poly bags, courier bags and packaging · Sadar Bazaar, Delhi</p>
       <p>Contact: <b>Vasu</b><br><a class="phone" href="tel:+919625364124">96253 64124</a></p>
       <div class="visit-actions">
-        <a class="btn" href="https://www.google.com/maps/dir/?api=1&amp;destination=Arora+Plastic+Company,+Sadar+Bazaar,+Delhi" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pin"/></svg>Get directions</a>
+        <a class="btn" href="https://maps.app.goo.gl/f4fRcyAyXy6nwa7E6" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pin"/></svg>Get directions</a>
         <a class="btn quiet" href="tel:+919625364124"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-phone"/></svg>Call</a>
         <a class="btn wa js-wa" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp</a>
       </div>
     </div>
-    <iframe class="map" src="https://www.google.com/maps?q=Arora+Plastic+Company,+Sadar+Bazaar,+Delhi&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map showing Arora Plastic Company, Sadar Bazaar, Delhi"></iframe>
+    <!-- opens the shop's exact pin in Google Maps (an embedded map can't use this pin link) -->
+    <a class="map-card" href="https://maps.app.goo.gl/f4fRcyAyXy6nwa7E6" target="_blank" rel="noopener" aria-label="Open Arora Plastic Company's location in Google Maps">
+      <svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="400" height="240" fill="var(--field)"/>
+        <g stroke="var(--line)" stroke-width="14" fill="none" stroke-linecap="round">
+          <path d="M-10 70 L410 50"/><path d="M-10 170 L410 190"/><path d="M90 -10 L120 250"/><path d="M290 -10 L260 250"/><path d="M120 120 L260 110"/>
+        </g>
+        <g stroke="var(--line)" stroke-width="5" fill="none" opacity=".8"><path d="M-10 120 L120 120"/><path d="M260 110 L410 115"/><path d="M190 -10 L195 115"/><path d="M200 120 L205 250"/></g>
+        <path d="M200 28c-19 0-34 15-34 34 0 26 34 62 34 62s34-36 34-62c0-19-15-34-34-34z" fill="var(--bad)"/>
+        <circle cx="200" cy="62" r="12" fill="#fff"/>
+      </svg>
+      <span class="map-label"><b>Arora Plastic Company</b><span>Sadar Bazaar, Delhi · Tap to open in Google Maps</span></span>
+    </a>
   </section>
 
-  <footer>Arora Plastic Company · Sadar Bazaar, Delhi · Vasu: <a href="tel:+919625364124">96253 64124</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=Arora+Plastic+Company,+Sadar+Bazaar,+Delhi" target="_blank" rel="noopener">Open in Google Maps</a></footer>
+  <footer>Arora Plastic Company · Sadar Bazaar, Delhi · Vasu: <a href="tel:+919625364124">96253 64124</a> · <a href="https://maps.app.goo.gl/f4fRcyAyXy6nwa7E6" target="_blank" rel="noopener">Open in Google Maps</a></footer>
 </div>
 
 <a class="wa-float js-wa" href="#" target="_blank" rel="noopener" aria-label="Chat with Vasu on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg><span>Chat with Vasu</span></a>
