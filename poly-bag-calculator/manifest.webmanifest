@@ -1,0 +1,15 @@
+{
+  "name": "Poly Bag Size Calculator · Arora Plastic Company",
+  "short_name": "Arora Bags",
+  "description": "Find the right poly bag for your product and order from Arora Plastic Company, Sadar Bazaar, Delhi.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef1f5",
+  "theme_color": "#1f4fd1",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

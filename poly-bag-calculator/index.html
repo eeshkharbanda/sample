@@ -15,6 +15,11 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#1f4fd1">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Arora Bags">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -185,6 +190,29 @@
     .pin .btn { padding: 10px 12px; }
     .views { grid-template-columns: minmax(0, 1fr) 76px; }
   }
+  /* add to home screen */
+  @media (min-width: 701px) { .wrap { padding-bottom: 64px; } }  /* room for the floating WhatsApp button */
+  .install { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .install-hint { font-size: 13px; color: var(--muted); }
+
+  /* courier estimate */
+  .courier-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+  .courier-head h2 { margin-bottom: 4px; }
+  .courier-head .lead { font-size: 13px; }
+  .courier-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 16px; align-items: center; }
+  @media (max-width: 640px) { .courier-body { grid-template-columns: 1fr; } }
+  .price { background: var(--accent-soft); border-radius: 10px; padding: 14px 16px; }
+  .price .label { color: var(--muted); font-size: 13px; }
+  .price .big { font: 800 40px/1.05 var(--display); color: var(--ok); letter-spacing: -.01em; }
+  .price .sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .price .sub s { color: var(--muted); }
+  .cfacts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 14px; margin: 0; font-size: 14px; align-items: center; }
+  .cfacts dt { color: var(--muted); }
+  .cfacts dt small { display: block; font-size: 11.5px; }
+  .cfacts dd { margin: 0; text-align: right; font: 500 14px var(--mono); }
+  .cfacts input { width: 90px; padding: 5px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--field); text-align: right; font: 500 14px var(--mono); }
+  .courier .tip { margin: 12px 0 0; padding: 8px 12px; border-radius: 8px; background: var(--warn-bg); color: var(--warn); font-size: 13.5px; }
+  .courier .fine { margin: 10px 0 0; font-size: 12px; color: var(--muted); }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -206,6 +234,10 @@
     <h1>No need to worry about finding the perfect bag size for your product!</h1>
     <p class="lead">Enter your product's size and we'll pick the right poly bag in seconds: not too tight to seal, not so big it looks sloppy.</p>
     <p class="delivery"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-truck"/></svg><span><b>We deliver to your doorstep.</b> Order on WhatsApp and get your bags home-delivered. Ask Vasu about your area.</span></p>
+    <div class="install" id="install" hidden>
+      <button class="btn quiet small" id="install-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-add"/></svg>Add to home screen</button>
+      <span class="install-hint" id="install-hint" hidden>On iPhone: in Safari, tap <b>Share</b> (the square with an arrow), then <b>Add to Home Screen</b>.</span>
+    </div>
   </header>
 
   <main>
@@ -286,6 +318,33 @@
     </section>
   </main>
 
+  <section class="card courier" aria-label="Courier charge estimate">
+    <div class="courier-head">
+      <div>
+        <h2>Courier charge for this parcel</h2>
+        <p class="lead">What one parcel of this size costs to ship, based on published courier rates.</p>
+      </div>
+      <div class="seg" role="group" aria-label="Where it's going">
+        <button type="button" id="z-city" aria-pressed="true">Within city</button>
+        <button type="button" id="z-india" aria-pressed="false">Across India</button>
+      </div>
+    </div>
+    <div class="courier-body">
+      <div class="price">
+        <div class="label">As low as</div>
+        <div class="big" id="c-low">–</div>
+        <div class="sub" id="c-typ"></div>
+      </div>
+      <dl class="cfacts">
+        <dt>Charged as</dt><dd id="c-bill"></dd>
+        <dt>Size weight <small>(L × B × H ÷ 5000)</small></dt><dd id="c-vol"></dd>
+        <dt><label for="wt">Actual weight</label></dt><dd><input id="wt" type="number" inputmode="numeric" min="0" step="50" placeholder="e.g. 400"> g</dd>
+      </dl>
+    </div>
+    <p class="tip" id="c-tip" hidden></p>
+    <p class="fine" id="c-fine"></p>
+  </section>
+
   <section class="card">
     <details class="saved" id="saved">
       <summary><span>My saved products <span id="saved-count"></span></span></summary>
@@ -345,6 +404,7 @@
   <symbol id="i-phone" viewBox="0 0 24 24"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"/></symbol>
   <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.3-.5-.5-1-1.1-1.3-1.7-.1-.2 0-.4.1-.5l.4-.4.2-.4v-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.6.6-.9 1.3-.9 2.1 0 .9.4 1.8 1 2.5 1.1 1.5 2.4 2.7 4.1 3.4 1.6.7 2.2.6 2.6.5.6-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1l-.4-.2z"/></symbol>
   <symbol id="i-truck" viewBox="0 0 24 24"><path fill="currentColor" d="M3 5h11v3h3.6l3.4 4.2V17h-2.1a2.5 2.5 0 0 1-4.8 0H9.9a2.5 2.5 0 0 1-4.8 0H3V5zm11 5v3h5l-2.4-3H14zM7.5 16.2a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9.6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></symbol>
+  <symbol id="i-add" viewBox="0 0 24 24"><path fill="currentColor" d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v16h10V4H7zm4 4h2v3h3v2h-3v3h-2v-3H8v-2h3V8z"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></symbol>
 </svg>
 
@@ -361,6 +421,19 @@ const WA_HELLO = "Hi Vasu, I found Arora Plastic Company through your Poly Bag S
 // Quick picks: [label, length, breadth, height (cm), clothing?]
 const PICKS = [['T-shirt', 28, 22, 3, true], ['Shirt', 30, 23, 4, true], ['Kurta', 35, 28, 4, true], ['Jeans', 38, 28, 5, true],
   ['Shoe box', 33, 20, 12, false], ['Small box', 20, 15, 8, false]];
+
+// Google Analytics 4 Measurement ID (looks like 'G-ABC123XYZ'). Leave '' to switch analytics off.
+const GA_ID = '';
+
+// Courier rates in ₹ per 500 g slab, before 18% GST and fuel surcharge. Update when rates change.
+// low  = the lowest published starting rate (shown as "As low as")
+// high = what many small sellers pay on standard rate cards
+// Sources (Oct 2026): Shipmozo, Shiprocket and ClickPost published rate guides.
+const COURIER = {
+  updated: 'Oct 2026',
+  city:  { label: 'within the same city', low: 20, high: 36 },
+  india: { label: 'across India',        low: 54, high: 90 },
+};
 // ============================================================================
 
 const IN = 2.54, FLAP = 2;
@@ -530,8 +603,72 @@ function update() {
   $('order-label').textContent = best ? `Order ${best.bag[0]} × ${best.bag[1]} bags on WhatsApp` : 'Ask for a custom size on WhatsApp';
 
   renderProducts();
+  renderCourier(H);
+  trackResult(best);
   requestAnimationFrame(animate);
 }
+
+// ---- courier estimate ------------------------------------------------------------
+// Couriers bill the higher of actual weight and size weight (L × B × H in cm ÷ 5000), in 500 g slabs.
+let zone = 'city';
+const rupees = n => '₹' + Math.round(n).toLocaleString('en-IN');
+function renderCourier(H) {
+  const z = COURIER[zone];
+  const vol = state.L * state.B * H / 5000;                    // kg
+  const actual = parseFloat($('wt').value) / 1000;             // kg, or NaN when not given
+  const hasActual = isFinite(actual) && actual > 0;
+  const billable = Math.max(vol, hasActual ? actual : 0, 0.001);
+  const slabs = Math.max(1, Math.ceil(billable / 0.5 - 1e-9));
+  const kg = slabs * 0.5;
+  $('c-low').textContent = rupees(z.low * slabs);
+  $('c-typ').textContent = `Many small sellers pay ${rupees(z.high * slabs)} for this parcel ${z.label}.`;
+  $('c-bill').textContent = `${kg} kg (${slabs} × 500 g)`;
+  $('c-vol').textContent = `${f1(vol)} kg`;
+  $('c-fine').textContent = `Per parcel, before 18% GST and fuel surcharge (about 10–12%). Based on published courier rate cards, updated ${COURIER.updated}. Your actual rate depends on the courier, the pincode and how many parcels you send each month.`;
+  const tip = $('c-tip'); tip.hidden = true;
+  const over = billable - (slabs - 1) * 0.5;                   // how far into the current slab
+  if (slabs > 1 && over <= 0.1) {
+    tip.hidden = false;
+    tip.textContent = `You're just ${Math.round(over * 1000)} g over ${(slabs - 1) * 0.5} kg, so you're charged for ${kg} kg. Packing a little smaller or lighter would save about ${rupees(z.low)} on every parcel.`;
+  } else if (vol > 0.5 && (!hasActual || vol > actual)) {
+    tip.hidden = false;
+    tip.textContent = hasActual
+      ? `You're paying for size, not weight: this parcel is billed at ${kg} kg but weighs ${f1(actual)} kg. A flatter pack (less height) brings the charge down.`
+      : `Couriers charge for size when a parcel is big but light. Add the weight above to see what you'd really pay.`;
+  }
+}
+$('z-city').addEventListener('click', () => { zone = 'city'; $('z-city').setAttribute('aria-pressed', true); $('z-india').setAttribute('aria-pressed', false); update(); track('courier_zone', { zone }); });
+$('z-india').addEventListener('click', () => { zone = 'india'; $('z-india').setAttribute('aria-pressed', true); $('z-city').setAttribute('aria-pressed', false); update(); track('courier_zone', { zone }); });
+$('wt').addEventListener('input', () => update());
+
+// ---- measurements for the shop (Google Analytics 4, only when GA_ID is set) --------
+function track(name, params = {}) { if (window.gtag) window.gtag('event', name, params); }
+if (GA_ID) {
+  const sc = document.createElement('script'); sc.async = true; sc.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(GA_ID);
+  document.head.appendChild(sc);
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', GA_ID, { anonymize_ip: true });
+}
+// which bag sizes people end up on (sent once they stop sliding for 2 seconds)
+let resultTimer = null, lastResult = '';
+function trackResult(best) {
+  clearTimeout(resultTimer);
+  resultTimer = setTimeout(() => {
+    const size = best ? `${best.bag[0]}x${best.bag[1]}` : 'custom';
+    if (size !== lastResult) { lastResult = size; track('bag_result', { bag_size: size, clothing: state.soft }); }
+  }, 2000);
+}
+// taps on call, WhatsApp, directions and quick picks
+document.addEventListener('click', e => {
+  const el = e.target.closest('a, button'); if (!el) return;
+  const href = el.getAttribute('href') || '';
+  if (href.startsWith('tel:')) track('call_vasu');
+  else if (href.includes('wa.me')) track(el.id === 'order-wa' || el.id === 'pin-order' ? 'order_whatsapp' : 'chat_whatsapp', { bag_size: lastResult });
+  else if (href.includes('maps.app.goo.gl')) track('directions');
+  else if (el.closest('#picks')) track('quick_pick', { product: el.textContent });
+});
 
 // ---- inputs (stored in cm, shown in the chosen unit) --------------------------
 const RANGE = { cm: { L: [1, 75], B: [1, 70], H: [0.5, 40], step: 0.5 }, in: { L: [0.5, 30], B: [0.5, 28], H: [0.25, 16], step: 0.25 } };
@@ -633,6 +770,28 @@ sortProducts();
 $('M-n').value = state.M;
 setUnit(state.unit);
 ['L', 'B', 'H'].forEach(id => set(id, state[id]));
+
+// ---- add to home screen ----------------------------------------------------------
+if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+let installPrompt = null;
+if (!standalone) {
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installPrompt = e; $('install').hidden = false; });
+  if (isIOS) $('install').hidden = false;  // iPhone has no install prompt: show how to do it
+}
+$('install-btn').addEventListener('click', async () => {
+  track('install_tap');
+  if (installPrompt) {
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') { track('installed'); $('install').hidden = true; }
+    installPrompt = null;
+  } else {
+    $('install-hint').hidden = false;
+  }
+});
+window.addEventListener('appinstalled', () => { $('install').hidden = true; });
 </script>
 </body>
 </html>
