@@ -200,17 +200,22 @@
   .courier-head h2 { margin-bottom: 4px; }
   .courier-head .lead { font-size: 13px; }
   .courier-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 16px; align-items: center; }
-  @media (max-width: 640px) { .courier-body { grid-template-columns: 1fr; } }
+  .courier-body .price { order: -1; }  /* price first beside the inputs; on phones the weight box comes first */
+  @media (max-width: 640px) { .courier-body { grid-template-columns: 1fr; } .courier-body .price { order: 0; } }
   .price { background: var(--accent-soft); border-radius: 10px; padding: 14px 16px; }
   .price .label { color: var(--muted); font-size: 13px; }
   .price .big { font: 800 40px/1.05 var(--display); color: var(--ok); letter-spacing: -.01em; }
+  .price .big.ask { font-size: 22px; line-height: 1.25; color: var(--ink); }
   .price .sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
   .price .sub s { color: var(--muted); }
   .cfacts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 14px; margin: 0; font-size: 14px; align-items: center; }
   .cfacts dt { color: var(--muted); }
   .cfacts dt small { display: block; font-size: 11.5px; }
   .cfacts dd { margin: 0; text-align: right; font: 500 14px var(--mono); }
-  .cfacts input { width: 90px; padding: 5px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--field); text-align: right; font: 500 14px var(--mono); }
+  .cfacts input { width: 104px; padding: 5px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--field); text-align: right; font: 500 14px var(--mono); }
+  .sellon { display: flex; align-items: center; gap: 8px 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .sellon > span { font-weight: 600; font-size: 14px; }
+  .sellon .seg { flex-wrap: wrap; }
   .courier .tip { margin: 12px 0 0; padding: 8px 12px; border-radius: 8px; background: var(--warn-bg); color: var(--warn); font-size: 13.5px; }
   .courier .fine { margin: 10px 0 0; font-size: 12px; color: var(--muted); }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -318,28 +323,41 @@
     </section>
   </main>
 
-  <section class="card courier" aria-label="Courier charge estimate">
+  <section class="card courier" aria-label="Shipping charge check">
     <div class="courier-head">
       <div>
-        <h2>Courier charge for this parcel</h2>
-        <p class="lead">What one parcel of this size costs to ship, based on published courier rates.</p>
+        <h2>Shipping charge check</h2>
+        <p class="lead" id="c-lead"></p>
       </div>
+    </div>
+    <div class="sellon">
+      <span>Where do you sell?</span>
+      <div class="seg" role="group" aria-label="Where do you sell?" id="channels">
+        <button type="button" data-ch="meesho">Meesho</button>
+        <button type="button" data-ch="amazon">Amazon</button>
+        <button type="button" data-ch="flipkart">Flipkart</button>
+        <button type="button" data-ch="website">Own website</button>
+      </div>
+    </div>
+    <div class="sellon" id="zone-row">
+      <span>Delivering</span>
       <div class="seg" role="group" aria-label="Where it's going">
         <button type="button" id="z-city" aria-pressed="true">Within city</button>
         <button type="button" id="z-india" aria-pressed="false">Across India</button>
       </div>
     </div>
     <div class="courier-body">
-      <div class="price">
-        <div class="label">As low as</div>
-        <div class="big" id="c-low">–</div>
-        <div class="sub" id="c-typ"></div>
-      </div>
       <dl class="cfacts">
-        <dt>Charged as</dt><dd id="c-bill"></dd>
+        <dt><label for="wt">Product weight</label></dt><dd><input id="wt" type="number" inputmode="numeric" min="0" step="10" placeholder="e.g. 400"> g</dd>
+        <dt>Poly bag weight <small id="c-micron"></small></dt><dd id="c-bagwt"></dd>
+        <dt>Packed weight</dt><dd id="c-packed"></dd>
         <dt>Size weight <small>(L × B × H ÷ 5000)</small></dt><dd id="c-vol"></dd>
-        <dt><label for="wt">Actual weight</label></dt><dd><input id="wt" type="number" inputmode="numeric" min="0" step="50" placeholder="e.g. 400"> g</dd>
       </dl>
+      <div class="price">
+        <div class="label" id="c-label"></div>
+        <div class="big" id="c-big">–</div>
+        <div class="sub" id="c-sub"></div>
+      </div>
     </div>
     <p class="tip" id="c-tip" hidden></p>
     <p class="fine" id="c-fine"></p>
@@ -419,8 +437,11 @@ const BAG_SIZES = [
 const SHOP_WHATSAPP = '919625364124';
 const WA_HELLO = "Hi Vasu, I found Arora Plastic Company through your Poly Bag Size Calculator. I'd like to know about poly bag sizes, prices and availability.";
 // Quick picks: [label, length, breadth, height (cm), clothing?]
-const PICKS = [['T-shirt', 28, 22, 3, true], ['Shirt', 30, 23, 4, true], ['Kurta', 35, 28, 4, true], ['Jeans', 38, 28, 5, true],
-  ['Shoe box', 33, 20, 12, false], ['Small box', 20, 15, 8, false]];
+const PICKS = [['T-shirt', 28, 22, 3, true], ['Kurti', 35, 28, 4, true], ['Saree', 30, 25, 4, true], ['Jeans', 38, 28, 5, true],
+  ['Shoe box', 33, 20, 12, false], ['Jewellery box', 12, 10, 5, false], ['Phone cover', 19, 11, 2, false]];
+
+// Thickness of Arora's courier bags, used to estimate how much a bag weighs. Change if different.
+const BAG_MICRON = 60;
 
 // Google Analytics 4 Measurement ID (looks like 'G-ABC123XYZ'). Leave '' to switch analytics off.
 const GA_ID = '';
@@ -431,6 +452,7 @@ const GA_ID = '';
 // Sources (Oct 2026): Shipmozo, Shiprocket and ClickPost published rate guides.
 const COURIER = {
   updated: 'Oct 2026',
+  slabGrams: 500,  // marketplaces and couriers bill in weight slabs; 500 g steps assumed
   city:  { label: 'within the same city', low: 20, high: 36 },
   india: { label: 'across India',        low: 54, high: 90 },
 };
@@ -597,46 +619,87 @@ function update() {
   const name = $('pname').value.trim();
   const product = `${name ? name + ', ' : ''}${f1(state.L)} × ${f1(state.B)} × ${f1(state.H)} cm${state.soft ? ' (clothing)' : ''}`;
   const msg = best
-    ? `Hi Vasu, I need poly bags of size ${best.bag[0]} × ${best.bag[1]} inch (+ 2 inch flap) from Arora Plastic Company.\nProduct: ${product}\nQuantity: \nHome delivery to (area / pincode): `
-    : `Hi Vasu, I need a custom poly bag of at least ${f1(n.w)} × ${f1(n.l)} inch (+ 2 inch flap).\nProduct: ${product}\nQuantity: \nHome delivery to (area / pincode): `;
+    ? `Hi Vasu, I need poly bags of size ${best.bag[0]} × ${best.bag[1]} inch (+ 2 inch flap) from Arora Plastic Company.\nProduct: ${product}\nQuantity: \nI sell on: ${CHANNELS[channel]}\nHome delivery to (area / pincode): `
+    : `Hi Vasu, I need a custom poly bag of at least ${f1(n.w)} × ${f1(n.l)} inch (+ 2 inch flap).\nProduct: ${product}\nQuantity: \nI sell on: ${CHANNELS[channel]}\nHome delivery to (area / pincode): `;
   $('order-wa').href = $('pin-order').href = waLink(msg);
   $('order-label').textContent = best ? `Order ${best.bag[0]} × ${best.bag[1]} bags on WhatsApp` : 'Ask for a custom size on WhatsApp';
 
   renderProducts();
-  renderCourier(H);
+  renderCourier(H, best);
   trackResult(best);
   requestAnimationFrame(animate);
 }
 
-// ---- courier estimate ------------------------------------------------------------
-// Couriers bill the higher of actual weight and size weight (L × B × H in cm ÷ 5000), in 500 g slabs.
+// ---- shipping charge check -------------------------------------------------------
+// Meesho bills shipping by packed weight. Amazon, Flipkart and couriers bill the higher of packed weight and
+// size weight (L × B × H in cm ÷ 5000). All of them bill in weight slabs, so every gram near a slab edge counts.
+const CHANNELS = { meesho: 'Meesho', amazon: 'Amazon', flipkart: 'Flipkart', website: 'my own website' };
+let channel = store.get('pb-channel', 'meesho'); if (!CHANNELS[channel]) channel = 'meesho';
 let zone = 'city';
 const rupees = n => '₹' + Math.round(n).toLocaleString('en-IN');
-function renderCourier(H) {
-  const z = COURIER[zone];
-  const vol = state.L * state.B * H / 5000;                    // kg
-  const actual = parseFloat($('wt').value) / 1000;             // kg, or NaN when not given
-  const hasActual = isFinite(actual) && actual > 0;
-  const billable = Math.max(vol, hasActual ? actual : 0, 0.001);
-  const slabs = Math.max(1, Math.ceil(billable / 0.5 - 1e-9));
-  const kg = slabs * 0.5;
-  $('c-low').textContent = rupees(z.low * slabs);
-  $('c-typ').textContent = `Many small sellers pay ${rupees(z.high * slabs)} for this parcel ${z.label}.`;
-  $('c-bill').textContent = `${kg} kg (${slabs} × 500 g)`;
-  $('c-vol').textContent = `${f1(vol)} kg`;
-  $('c-fine').textContent = `Per parcel, before 18% GST and fuel surcharge (about 10–12%). Based on published courier rate cards, updated ${COURIER.updated}. Your actual rate depends on the courier, the pincode and how many parcels you send each month.`;
+const grams = g => g >= 1000 ? `${f1(g / 1000)} kg` : `${Math.round(g)} g`;
+// a flat LDPE bag: two layers of film, bag width × (length + flap), at BAG_MICRON thickness, density 0.92 g/cm³
+const bagGrams = bag => bag ? bag[0] * IN * (bag[1] + FLAP) * IN * 2 * (BAG_MICRON / 10000) * 0.92 : 0;
+function renderCourier(H, best) {
+  const slab = COURIER.slabGrams;
+  const bagG = bagGrams(best && best.bag);
+  const productG = parseFloat($('wt').value);
+  const hasWeight = isFinite(productG) && productG > 0;
+  const packedG = hasWeight ? productG + bagG : NaN;
+  const volG = state.L * state.B * H / 5000 * 1000;
+  const bySize = channel !== 'meesho';                         // Meesho goes by weight only
+  const billG = hasWeight ? Math.max(packedG, bySize ? volG : 0) : (bySize ? volG : NaN);
+  const slabs = isFinite(billG) ? Math.max(1, Math.ceil(billG / slab - 1e-9)) : 0;
+  const slabG = slabs * slab, spare = slabG - billG, over = billG - (slabs - 1) * slab;
+  const name = CHANNELS[channel];
+  document.querySelectorAll('#channels button').forEach(bt => bt.setAttribute('aria-pressed', bt.dataset.ch === channel));
+  $('zone-row').hidden = channel !== 'website';
+  $('c-micron').textContent = `(about, ${BAG_MICRON} micron)`;
+  $('c-bagwt').textContent = best ? `${Math.round(bagG)} g` : '–';
+  $('c-packed').textContent = hasWeight ? `${Math.round(packedG)} g` : '–';
+  $('c-vol').textContent = grams(volG);
+  const big = $('c-big'); big.classList.remove('ask');
   const tip = $('c-tip'); tip.hidden = true;
-  const over = billable - (slabs - 1) * 0.5;                   // how far into the current slab
-  if (slabs > 1 && over <= 0.1) {
+
+  if (channel === 'website') {
+    const z = COURIER[zone];
+    $('c-lead').textContent = 'What one parcel costs with a courier aggregator, based on published rates.';
+    $('c-label').textContent = 'As low as';
+    big.textContent = rupees(z.low * slabs);
+    $('c-sub').textContent = `Many small sellers pay ${rupees(z.high * slabs)} for this parcel ${z.label}. Charged as ${grams(slabG)}.`;
+    $('c-fine').textContent = `Per parcel, before 18% GST and fuel surcharge (about 10–12%). Based on published courier rate cards, updated ${COURIER.updated}. Your actual rate depends on the courier, the pincode and how many parcels you send each month.`;
+  } else {
+    $('c-lead').textContent = channel === 'meesho'
+      ? 'Meesho charges shipping by packed weight. Stay in a lower slab and you pay less on every order.'
+      : `${name} charges shipping by weight slab, and can charge big, light parcels by size instead.`;
+    $('c-label').textContent = `Your ${name} weight slab`;
+    if (!isFinite(billG) || !hasWeight && !bySize) {
+      big.classList.add('ask'); big.textContent = 'Add your product weight';
+      $('c-sub').textContent = 'Type it in grams to see your slab and how much room you have left.';
+    } else {
+      big.textContent = `up to ${grams(slabG)}`;
+      $('c-sub').textContent = hasWeight
+        ? `${Math.round(spare)} g to spare before the next slab.`
+        : 'Based on size only. Add the weight to check.';
+    }
+    $('c-fine').textContent = `${name} sets the exact shipping fee from your weight slab and the delivery zone; check your seller panel for the rupee amount. Slabs shown in ${slab} g steps. Bag weight is an estimate for a ${BAG_MICRON} micron bag.`;
+  }
+  // tips that save money on every parcel
+  if (slabs > 1 && over <= 100) {
     tip.hidden = false;
-    tip.textContent = `You're just ${Math.round(over * 1000)} g over ${(slabs - 1) * 0.5} kg, so you're charged for ${kg} kg. Packing a little smaller or lighter would save about ${rupees(z.low)} on every parcel.`;
-  } else if (vol > 0.5 && (!hasActual || vol > actual)) {
+    tip.textContent = `You're just ${Math.round(over)} g over ${grams(slabG - slab)}, so you're charged for ${grams(slabG)}. A lighter or smaller pack would drop you a slab and save on every order.`;
+  } else if (hasWeight && spare < 40) {
     tip.hidden = false;
-    tip.textContent = hasActual
-      ? `You're paying for size, not weight: this parcel is billed at ${kg} kg but weighs ${f1(actual)} kg. A flatter pack (less height) brings the charge down.`
-      : `Couriers charge for size when a parcel is big but light. Add the weight above to see what you'd really pay.`;
+    tip.textContent = `Careful: only ${Math.round(spare)} g to spare. A heavier bag or extra packing would push this into the ${grams(slabG + slab)} slab.`;
+  } else if (bySize && volG > slab && (!hasWeight || volG > packedG)) {
+    tip.hidden = false;
+    tip.textContent = `This parcel is charged for its size, not its weight. A flatter pack (less height) brings it down.`;
   }
 }
+$('channels').addEventListener('click', e => {
+  const bt = e.target.closest('button[data-ch]'); if (!bt) return;
+  channel = bt.dataset.ch; store.set('pb-channel', channel); update(); track('sell_on', { channel });
+});
 $('z-city').addEventListener('click', () => { zone = 'city'; $('z-city').setAttribute('aria-pressed', true); $('z-india').setAttribute('aria-pressed', false); update(); track('courier_zone', { zone }); });
 $('z-india').addEventListener('click', () => { zone = 'india'; $('z-india').setAttribute('aria-pressed', true); $('z-city').setAttribute('aria-pressed', false); update(); track('courier_zone', { zone }); });
 $('wt').addEventListener('input', () => update());
