@@ -92,9 +92,6 @@
   .seg button[aria-pressed="true"] { background: var(--card); color: var(--ink); font-weight: 600; box-shadow: 0 1px 3px rgba(10, 20, 40, .15); }
   .calc-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
   .calc-top h2 { margin: 0; }
-  .picks { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-  .picks button { border: 1px solid var(--line); background: var(--field); border-radius: 999px; padding: 4px 12px; font-size: 13px; cursor: pointer; }
-  .picks button:hover { border-color: var(--accent); color: var(--accent); }
   .measure { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 4px 14px; align-items: center; }
   .measure svg { width: 92px; height: auto; grid-row: span 3; }
   .field label { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 600; }
@@ -254,7 +251,6 @@
           <button type="button" id="u-in" aria-pressed="false">inch</button>
         </div>
       </div>
-      <div class="picks" id="picks" aria-label="Common products"></div>
 
       <div class="measure">
         <!-- which side is which -->
@@ -436,9 +432,6 @@ const BAG_SIZES = [
 ];
 const SHOP_WHATSAPP = '919625364124';
 const WA_HELLO = "Hi Vasu, I found Arora Plastic Company through your Poly Bag Size Calculator. I'd like to know about poly bag sizes, prices and availability.";
-// Quick picks: [label, length, breadth, height (cm), clothing?]
-const PICKS = [['T-shirt', 28, 22, 3, true], ['Kurti', 35, 28, 4, true], ['Saree', 30, 25, 4, true], ['Jeans', 38, 28, 5, true],
-  ['Shoe box', 33, 20, 12, false], ['Jewellery box', 12, 10, 5, false], ['Phone cover', 19, 11, 2, false]];
 
 // Thickness of Arora's courier bags, used to estimate how much a bag weighs. Change if different.
 const BAG_MICRON = 60;
@@ -723,14 +716,13 @@ function trackResult(best) {
     if (size !== lastResult) { lastResult = size; track('bag_result', { bag_size: size, clothing: state.soft }); }
   }, 2000);
 }
-// taps on call, WhatsApp, directions and quick picks
+// taps on call, WhatsApp and directions
 document.addEventListener('click', e => {
   const el = e.target.closest('a, button'); if (!el) return;
   const href = el.getAttribute('href') || '';
   if (href.startsWith('tel:')) track('call_vasu');
   else if (href.includes('wa.me')) track(el.id === 'order-wa' || el.id === 'pin-order' ? 'order_whatsapp' : 'chat_whatsapp', { bag_size: lastResult });
   else if (href.includes('maps.app.goo.gl')) track('directions');
-  else if (el.closest('#picks')) track('quick_pick', { product: el.textContent });
 });
 
 // ---- inputs (stored in cm, shown in the chosen unit) --------------------------
@@ -766,11 +758,6 @@ $('u-cm').addEventListener('click', () => setUnit('cm'));
 $('u-in').addEventListener('click', () => setUnit('in'));
 $('soft-no').addEventListener('click', () => { setSoft(false); update(); });
 $('soft-yes').addEventListener('click', () => { setSoft(true); update(); });
-PICKS.forEach(([label, l, b, h, soft]) => {
-  const btn = document.createElement('button'); btn.type = 'button'; btn.textContent = label;
-  btn.onclick = () => { setSoft(soft); set('L', l); set('B', b); set('H', h); };
-  $('picks').appendChild(btn);
-});
 document.querySelectorAll('.js-wa').forEach(a => { a.href = waLink(WA_HELLO); });
 
 // ---- saved products (kept in this browser) --------------------------------------
