@@ -222,6 +222,8 @@
 
   /* your brand on your bag */
   .mock .lead { font-size: 13.5px; margin-bottom: 14px; }
+  .print-badge { margin: 0 0 6px; padding: 8px 12px; border-radius: 8px; background: var(--accent-soft); font-size: 14px; width: fit-content; max-width: 100%; }
+  .print-badge span { color: var(--muted); }
   .mock-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px); gap: 18px; align-items: start; }
   @media (max-width: 760px) { .mock-grid { grid-template-columns: 1fr; } #mock { order: -1; max-width: 360px; justify-self: center; } }
   .mock-controls { display: grid; gap: 12px; align-content: start; }
@@ -385,6 +387,7 @@
 
   <section class="card mock" aria-label="Your brand on your bag">
     <h2 data-i18n="mockTitle">Your brand on your bag</h2>
+    <p class="print-badge"><b data-i18n="wePrint">We print custom bags with your logo.</b> <span id="print-min"></span></p>
     <p class="lead" data-i18n="mockLead">Add your logo and see how a printed courier bag would look. Your logo stays on your phone: nothing is uploaded.</p>
     <div class="mock-grid">
       <div class="mock-controls">
@@ -399,7 +402,7 @@
           <a class="btn wa" id="print-wa" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg><span data-i18n="askPrinted">Ask Vasu about printed bags</span></a>
           <button type="button" class="btn quiet" id="mock-save"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-share"/></svg><span data-i18n="saveImage">Save or share image</span></button>
         </div>
-        <p class="mock-fine" data-i18n="mockFine">This is a preview. Ask Vasu about printing, minimum order and price.</p>
+        <p class="mock-fine" data-i18n="mockFine">This is a preview. Ask Vasu for prices, print colours and delivery time.</p>
       </div>
       <canvas id="mock" width="600" height="760" role="img" aria-label="Preview of a courier bag with your logo"></canvas>
     </div>
@@ -424,7 +427,7 @@
     <div>
       <h2 data-i18n="visitShop">Visit our shop</h2>
       <h3>Arora Plastic Company</h3>
-      <p data-i18n="shopDesc">Poly bags, courier bags and packaging · Sadar Bazaar, Delhi</p>
+      <p data-i18n="shopDescPrint">Poly bags, courier bags, packaging and custom printed bags with your logo · Sadar Bazaar, Delhi</p>
       <p data-i18n="cantCome"><b>Can't come to the shop?</b> We do home delivery. Message Vasu with your area.</p>
       <p><span data-i18n="contact">Contact:</span> <b>Vasu</b><br><a class="phone" href="tel:+919625364124">96253 64124</a></p>
       <div class="visit-actions">
@@ -484,6 +487,9 @@ const WA_HELLO = "Hi Vasu, I found Arora Plastic Company through your Poly Bag S
 // Thickness of Arora's courier bags, used to estimate how much a bag weighs. Change if different.
 const BAG_MICRON = 60;
 
+// Custom printed bags: smallest printing order Arora accepts, in rupees.
+const PRINT_MIN_ORDER = 30000;
+
 // Google Analytics 4 Measurement ID (looks like 'G-ABC123XYZ'). Leave '' to switch analytics off.
 const GA_ID = '';
 
@@ -528,7 +534,9 @@ const HI = {
   chooseLogo: 'अपना लोगो चुनें', removeLogo: 'लोगो हटाएँ', brandName: 'या अपने ब्रांड का नाम लिखें', bagColour: 'बैग का रंग',
   logoTip: 'टिप: बिना बैकग्राउंड वाला PNG लोगो सबसे अच्छा दिखता है, ख़ासकर गहरे रंग के बैग पर।',
   askPrinted: 'प्रिंटेड बैग के बारे में वासु से पूछें', saveImage: 'तस्वीर सेव या शेयर करें',
-  mockFine: 'यह सिर्फ़ झलक है। प्रिंटिंग, कम से कम ऑर्डर और दाम के लिए वासु से पूछें।',
+  mockFine: 'यह सिर्फ़ झलक है। दाम, प्रिंट के रंग और डिलीवरी के समय के लिए वासु से पूछें।',
+  wePrint: 'हम आपके लोगो के साथ कस्टम बैग प्रिंट करते हैं।',
+  shopDescPrint: 'पॉली बैग, कूरियर बैग, पैकिंग का सामान और लोगो वाले प्रिंटेड बैग · सदर बाज़ार, दिल्ली',
   mySaved: 'मेरे सेव किए प्रोडक्ट', save: 'सेव करें', savesHere: 'ऊपर का साइज़ इसी फ़ोन या कंप्यूटर में सेव होता है।', nothingSaved: 'अभी कुछ सेव नहीं है।',
   visitShop: 'हमारी दुकान पर आएँ', shopDesc: 'पॉली बैग, कूरियर बैग और पैकिंग का सामान · सदर बाज़ार, दिल्ली',
   cantCome: '<b>दुकान नहीं आ सकते?</b> हम होम डिलीवरी करते हैं। अपना एरिया वासु को मैसेज करें।',
@@ -979,8 +987,9 @@ function drawMockup(best) {
   ctx.fillStyle = '#5d6779'; ctx.font = '500 18px "IBM Plex Sans", "Noto Sans Devanagari", Arial, sans-serif';
   ctx.fillText('Arora Plastic Company · Sadar Bazaar, Delhi · 96253 64124', CW / 2, CH - 26);
   // the enquiry message carries the choices
-  const msg = `Hi Vasu, I'm interested in custom printed poly bags with my ${logoImg ? 'logo' : 'brand name'}${brand && !logoImg ? ` ("${brand}")` : ''}.\nBag size: ${bw} × ${bl} inch (+ 2 inch flap)\nBag colour: ${BAG_COLOURS[bagColour][0]}\nQuantity: \nI sell on: ${CHANNELS[channel]}\nI'll share my logo file here.`;
+  const msg = `Hi Vasu, I'm interested in custom printed poly bags with my ${logoImg ? 'logo' : 'brand name'}${brand && !logoImg ? ` ("${brand}")` : ''}.\nBag size: ${bw} × ${bl} inch (+ 2 inch flap)\nBag colour: ${BAG_COLOURS[bagColour][0]}\nQuantity: \nI sell on: ${CHANNELS[channel]}\nI understand the minimum printing order is ${rupees(PRINT_MIN_ORDER)}.\nI'll share my logo file here.`;
   $('print-wa').href = waLink(msg);
+  $('print-min').textContent = t(`Minimum printing order: ${rupees(PRINT_MIN_ORDER)}.`, `कम से कम प्रिंटिंग ऑर्डर: ${rupees(PRINT_MIN_ORDER)}।`);
 }
 function useLogo(dataUrl, save) {
   const img = new Image();
