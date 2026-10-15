@@ -22,7 +22,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;600;800&display=swap">
 <style>
   /* Layout: enter size → see bag → order. Inputs and result on the left, packing picture on the right; on phones a pinned result bar. */
   :root {
@@ -31,8 +31,8 @@
     --bag: #cfe0fb; --bag-edge: #4f7fe0; --flap: #a7c4f5; --product: #f1b65d; --product-edge: #b8741a;
     --ok: #157a3c; --warn: #a44f06; --warn-bg: #fdf1df; --bad: #b4231f; --bad-bg: #fbe6e5;
     --wa: #128c4a; --wa-ink: #ffffff;
-    --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
-    --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --display: "Archivo", "Noto Sans Devanagari", "Helvetica Neue", Arial, sans-serif;
+    --body: "IBM Plex Sans", "Noto Sans Devanagari", system-ui, -apple-system, "Segoe UI", sans-serif;
     --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   }
   @media (prefers-color-scheme: dark) {
@@ -215,6 +215,26 @@
   .sellon .seg { flex-wrap: wrap; }
   .courier .tip { margin: 12px 0 0; padding: 8px 12px; border-radius: 8px; background: var(--warn-bg); color: var(--warn); font-size: 13.5px; }
   .courier .fine { margin: 10px 0 0; font-size: 12px; color: var(--muted); }
+  /* language switch */
+  .lang button { padding: 4px 10px; font-size: 13px; }
+  .brand { position: relative; }
+  @media (max-width: 700px) { .brand .lang { margin-left: auto; } }
+
+  /* your brand on your bag */
+  .mock .lead { font-size: 13.5px; margin-bottom: 14px; }
+  .mock-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px); gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .mock-grid { grid-template-columns: 1fr; } #mock { order: -1; max-width: 360px; justify-self: center; } }
+  .mock-controls { display: grid; gap: 12px; align-content: start; }
+  .file-btn { justify-self: start; cursor: pointer; }
+  .linkish { justify-self: start; border: 0; background: none; color: var(--bad); cursor: pointer; padding: 0; font-size: 13px; }
+  .mock-field { display: grid; gap: 6px; font-weight: 600; font-size: 14px; }
+  .mock-field .text-in { font-weight: 400; }
+  .swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+  .swatches button { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--line); cursor: pointer; padding: 0; }
+  .swatches button[aria-pressed="true"] { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .mock-tip, .mock-fine { margin: 0; font-size: 12.5px; color: var(--muted); }
+  .mock-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  #mock { width: 100%; height: auto; border-radius: 10px; background: var(--field); border: 1px solid var(--line); }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -223,29 +243,33 @@
   <div class="brand">
     <div class="brand-id">
       <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="3" y="7" width="42" height="38" rx="7" fill="var(--accent)"/><rect x="3" y="3" width="42" height="10" rx="4" fill="var(--bag-edge)"/><text x="24" y="35" text-anchor="middle" font-family="Archivo, Arial, sans-serif" font-weight="800" font-size="22" letter-spacing="-.5" fill="#ffffff">AP</text></svg>
-      <div><div class="brand-name">Arora Plastic Company</div><div class="brand-sub">Poly bags &amp; courier bags · Sadar Bazaar, Delhi · Home delivery</div></div>
+      <div><div class="brand-name">Arora Plastic Company</div><div class="brand-sub" data-i18n="brandSub">Poly bags &amp; courier bags · Sadar Bazaar, Delhi · Home delivery</div></div>
+    </div>
+    <div class="seg lang" role="group" aria-label="Language / भाषा">
+      <button type="button" id="lang-en" aria-pressed="true">EN</button>
+      <button type="button" id="lang-hi" aria-pressed="false" lang="hi">हिंदी</button>
     </div>
     <div class="brand-actions">
-      <a class="btn quiet" href="tel:+919625364124"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-phone"/></svg>Call Vasu · 96253 64124</a>
+      <a class="btn quiet" href="tel:+919625364124"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-phone"/></svg><span data-i18n="callVasu">Call Vasu · 96253 64124</span></a>
       <a class="btn wa js-wa" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp</a>
     </div>
   </div>
 
   <header class="hero">
     <p class="hook">Size matters.</p>
-    <h1>No need to worry about finding the perfect bag size for your product!</h1>
-    <p class="lead">Enter your product's size and we'll pick the right poly bag in seconds: not too tight to seal, not so big it looks sloppy.</p>
-    <p class="delivery"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-truck"/></svg><span><b>We deliver to your doorstep.</b> Order on WhatsApp and get your bags home-delivered. Ask Vasu about your area.</span></p>
+    <h1 data-i18n="h1">No need to worry about finding the perfect bag size for your product!</h1>
+    <p class="lead" data-i18n="lead">Enter your product's size and we'll pick the right poly bag in seconds: not too tight to seal, not so big it looks sloppy.</p>
+    <p class="delivery"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-truck"/></svg><span data-i18n="delivery"><b>We deliver to your doorstep.</b> Order on WhatsApp and get your bags home-delivered. Ask Vasu about your area.</span></p>
     <div class="install" id="install" hidden>
-      <button class="btn quiet small" id="install-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-add"/></svg>Add to home screen</button>
-      <span class="install-hint" id="install-hint" hidden>On iPhone: in Safari, tap <b>Share</b> (the square with an arrow), then <b>Add to Home Screen</b>.</span>
+      <button class="btn quiet small" id="install-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-add"/></svg><span data-i18n="installBtn">Add to home screen</span></button>
+      <span class="install-hint" id="install-hint" data-i18n="installHint" hidden>On iPhone: in Safari, tap <b>Share</b> (the square with an arrow), then <b>Add to Home Screen</b>.</span>
     </div>
   </header>
 
   <main>
     <section class="card" aria-label="Your product">
       <div class="calc-top">
-        <h2>Your product</h2>
+        <h2 data-i18n="yourProduct">Your product</h2>
         <div class="seg" role="group" aria-label="Units">
           <button type="button" id="u-cm" aria-pressed="true">cm</button>
           <button type="button" id="u-in" aria-pressed="false">inch</button>
@@ -262,59 +286,59 @@
           <text x="20" y="84" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="600" fill="var(--ink)">B</text>
           <text x="3" y="52" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="600" fill="var(--ink)">H</text>
         </svg>
-        <div class="field"><label for="L-n">Length <span class="num"><input id="L-n" type="number" inputmode="decimal" min="0" step="0.5"><span class="u">cm</span></span></label>
+        <div class="field"><label for="L-n"><span data-i18n="length">Length</span> <span class="num"><input id="L-n" type="number" inputmode="decimal" min="0" step="0.5"><span class="u">cm</span></span></label>
           <input id="L" type="range" aria-label="Length slider"></div>
-        <div class="field"><label for="B-n">Breadth <span class="num"><input id="B-n" type="number" inputmode="decimal" min="0" step="0.5"><span class="u">cm</span></span></label>
+        <div class="field"><label for="B-n"><span data-i18n="breadth">Breadth</span> <span class="num"><input id="B-n" type="number" inputmode="decimal" min="0" step="0.5"><span class="u">cm</span></span></label>
           <input id="B" type="range" aria-label="Breadth slider"></div>
-        <div class="field"><label for="H-n">Height <span class="num"><input id="H-n" type="number" inputmode="decimal" min="0" step="0.5"><span class="u">cm</span></span></label>
+        <div class="field"><label for="H-n"><span data-i18n="height">Height</span> <span class="num"><input id="H-n" type="number" inputmode="decimal" min="0" step="0.5"><span class="u">cm</span></span></label>
           <input id="H" type="range" aria-label="Height slider"></div>
       </div>
 
       <div class="ask">
-        <div><b>Is it clothing or fabric?</b><small>Clothes squash, so they fit a smaller bag.</small></div>
+        <div><b data-i18n="isClothing">Is it clothing or fabric?</b><small data-i18n="clothingHint">Clothes squash, so they fit a smaller bag.</small></div>
         <div class="seg" role="group" aria-label="Is it clothing or fabric?">
-          <button type="button" id="soft-no" aria-pressed="true">No</button>
-          <button type="button" id="soft-yes" aria-pressed="false">Yes</button>
+          <button type="button" id="soft-no" aria-pressed="true" data-i18n="no">No</button>
+          <button type="button" id="soft-yes" aria-pressed="false" data-i18n="yes">Yes</button>
         </div>
       </div>
 
       <div class="result" id="result" aria-live="polite">
-        <div class="label">Use this poly bag</div>
+        <div class="label" data-i18n="useThis">Use this poly bag</div>
         <div class="big" id="out-size">–</div>
         <div class="sub" id="out-sub"></div>
         <div class="tight" id="tight" hidden></div>
         <a class="btn wa" id="order-wa" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg><span id="order-label">Order on WhatsApp</span></a>
-        <small>Home delivery available · or call Vasu: <a href="tel:+919625364124">96253 64124</a></small>
+        <small><span data-i18n="homeDelOrCall">Home delivery available · or call Vasu:</span> <a href="tel:+919625364124">96253 64124</a></small>
         <details class="calc">
-          <summary>Show calculation and extra room</summary>
+          <summary data-i18n="showCalc">Show calculation and extra room</summary>
           <dl>
-            <dt>Width needed</dt><dd id="r-nw"></dd>
-            <dt>Length needed</dt><dd id="r-nl"></dd>
-            <dt>Spare room</dt><dd id="r-spare"></dd>
+            <dt data-i18n="widthNeeded">Width needed</dt><dd id="r-nw"></dd>
+            <dt data-i18n="lengthNeeded">Length needed</dt><dd id="r-nl"></dd>
+            <dt data-i18n="spareRoom">Spare room</dt><dd id="r-spare"></dd>
           </dl>
-          <div class="room"><label for="M-n">Extra room around the product</label><span><input id="M-n" type="number" min="0" max="10" step="0.5"> cm</span></div>
-          <p class="room-note">More room means a bigger bag. The spare length folds down over the product and the flap sticks lower, as the packing picture shows.</p>
+          <div class="room"><label for="M-n" data-i18n="extraRoom">Extra room around the product</label><span><input id="M-n" type="number" min="0" max="10" step="0.5"> cm</span></div>
+          <p class="room-note" data-i18n="roomNote">More room means a bigger bag. The spare length folds down over the product and the flap sticks lower, as the packing picture shows.</p>
         </details>
       </div>
     </section>
 
     <section class="card pack" aria-label="How your product packs">
-      <h2>How your product packs</h2>
-      <p class="lead">Drawn to scale. Grid squares are 2 inches.</p>
+      <h2 data-i18n="howPacks">How your product packs</h2>
+      <p class="lead" data-i18n="toScale">Drawn to scale. Grid squares are 2 inches.</p>
       <div class="views">
         <div>
           <svg class="draw" id="front" viewBox="0 0 560 600" role="img" aria-label="Front view of the poly bag with the product inside"></svg>
-          <div class="caption">Front</div>
+          <div class="caption" data-i18n="front">Front</div>
         </div>
         <div>
           <svg class="draw" id="side" viewBox="0 0 200 600" role="img" aria-label="Side view showing the bag closing over the product and the flap sealing"></svg>
-          <div class="caption">Side: how it seals</div>
+          <div class="caption" data-i18n="side">Side: how it seals</div>
         </div>
       </div>
       <div class="legend">
-        <span><i style="background:var(--bag);border:1px solid var(--bag-edge)"></i>Poly bag</span>
-        <span><i style="background:var(--flap);border:1px solid var(--bag-edge)"></i>2 inch sealing flap</span>
-        <span><i style="background:var(--product);border:1px solid var(--product-edge)"></i>Your product</span>
+        <span><i style="background:var(--bag);border:1px solid var(--bag-edge)"></i><span data-i18n="lgBag">Poly bag</span></span>
+        <span><i style="background:var(--flap);border:1px solid var(--bag-edge)"></i><span data-i18n="lgFlap">2 inch sealing flap</span></span>
+        <span><i style="background:var(--product);border:1px solid var(--product-edge)"></i><span data-i18n="lgProduct">Your product</span></span>
       </div>
     </section>
   </main>
@@ -322,32 +346,32 @@
   <section class="card courier" aria-label="Shipping charge check">
     <div class="courier-head">
       <div>
-        <h2>Shipping charge check</h2>
+        <h2 data-i18n="shipCheck">Shipping charge check</h2>
         <p class="lead" id="c-lead"></p>
       </div>
     </div>
     <div class="sellon">
-      <span>Where do you sell?</span>
+      <span data-i18n="whereSell">Where do you sell?</span>
       <div class="seg" role="group" aria-label="Where do you sell?" id="channels">
         <button type="button" data-ch="meesho">Meesho</button>
         <button type="button" data-ch="amazon">Amazon</button>
         <button type="button" data-ch="flipkart">Flipkart</button>
-        <button type="button" data-ch="website">Own website</button>
+        <button type="button" data-ch="website" data-i18n="ownSite">Own website</button>
       </div>
     </div>
     <div class="sellon" id="zone-row">
-      <span>Delivering</span>
+      <span data-i18n="delivering">Delivering</span>
       <div class="seg" role="group" aria-label="Where it's going">
-        <button type="button" id="z-city" aria-pressed="true">Within city</button>
-        <button type="button" id="z-india" aria-pressed="false">Across India</button>
+        <button type="button" id="z-city" aria-pressed="true" data-i18n="withinCity">Within city</button>
+        <button type="button" id="z-india" aria-pressed="false" data-i18n="acrossIndia">Across India</button>
       </div>
     </div>
     <div class="courier-body">
       <dl class="cfacts">
-        <dt><label for="wt">Product weight</label></dt><dd><input id="wt" type="number" inputmode="numeric" min="0" step="10" placeholder="e.g. 400"> g</dd>
-        <dt>Poly bag weight <small id="c-micron"></small></dt><dd id="c-bagwt"></dd>
-        <dt>Packed weight</dt><dd id="c-packed"></dd>
-        <dt>Size weight <small>(L × B × H ÷ 5000)</small></dt><dd id="c-vol"></dd>
+        <dt><label for="wt" data-i18n="productWeight">Product weight</label></dt><dd><input id="wt" type="number" inputmode="numeric" min="0" step="10" placeholder="e.g. 400"> g</dd>
+        <dt><span data-i18n="bagWeight">Poly bag weight</span> <small id="c-micron"></small></dt><dd id="c-bagwt"></dd>
+        <dt data-i18n="packedWeight">Packed weight</dt><dd id="c-packed"></dd>
+        <dt><span data-i18n="sizeWeight">Size weight</span> <small>(L × B × H ÷ 5000)</small></dt><dd id="c-vol"></dd>
       </dl>
       <div class="price">
         <div class="label" id="c-label"></div>
@@ -359,31 +383,53 @@
     <p class="fine" id="c-fine"></p>
   </section>
 
+  <section class="card mock" aria-label="Your brand on your bag">
+    <h2 data-i18n="mockTitle">Your brand on your bag</h2>
+    <p class="lead" data-i18n="mockLead">Add your logo and see how a printed courier bag would look. Your logo stays on your phone: nothing is uploaded.</p>
+    <div class="mock-grid">
+      <div class="mock-controls">
+        <label class="btn quiet file-btn"><input type="file" id="logo-in" accept="image/*" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-upload"/></svg><span data-i18n="chooseLogo">Choose your logo</span></label>
+        <button type="button" class="linkish" id="logo-clear" hidden data-i18n="removeLogo">Remove logo</button>
+        <label class="mock-field"><span data-i18n="brandName">Or type your brand name</span>
+          <input id="brand-in" class="text-in" type="text" maxlength="30" placeholder="e.g. Kiara Fashions" data-i18n-ph="brandPh" autocomplete="off"></label>
+        <div class="mock-field"><span data-i18n="bagColour">Bag colour</span>
+          <div class="swatches" id="swatches" role="group" aria-label="Bag colour"></div></div>
+        <p class="mock-tip" data-i18n="logoTip">Tip: a PNG logo with a transparent background looks best, especially on dark bags.</p>
+        <div class="mock-actions">
+          <a class="btn wa" id="print-wa" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg><span data-i18n="askPrinted">Ask Vasu about printed bags</span></a>
+          <button type="button" class="btn quiet" id="mock-save"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-share"/></svg><span data-i18n="saveImage">Save or share image</span></button>
+        </div>
+        <p class="mock-fine" data-i18n="mockFine">This is a preview. Ask Vasu about printing, minimum order and price.</p>
+      </div>
+      <canvas id="mock" width="600" height="760" role="img" aria-label="Preview of a courier bag with your logo"></canvas>
+    </div>
+  </section>
+
   <section class="card">
     <details class="saved" id="saved">
-      <summary><span>My saved products <span id="saved-count"></span></span></summary>
+      <summary><span><span data-i18n="mySaved">My saved products</span> <span id="saved-count"></span></span></summary>
       <div class="saved-body">
         <div class="save-row">
-          <input id="pname" class="text-in" type="text" maxlength="80" placeholder="Name this product, e.g. Men's T-shirt L" autocomplete="off" aria-label="Product name">
-          <button class="btn" id="save-btn" type="button">Save</button>
+          <input id="pname" class="text-in" type="text" maxlength="80" placeholder="Name this product, e.g. Men's T-shirt L" data-i18n-ph="namePh" autocomplete="off" aria-label="Product name">
+          <button class="btn" id="save-btn" type="button" data-i18n="save">Save</button>
         </div>
-        <div class="status" id="save-status" aria-live="polite">Saves the size above on this phone or computer.</div>
+        <div class="status" id="save-status" aria-live="polite" data-i18n="savesHere">Saves the size above on this phone or computer.</div>
         <ul class="plist" id="plist"></ul>
-        <div class="empty" id="pempty">Nothing saved yet.</div>
+        <div class="empty" id="pempty" data-i18n="nothingSaved">Nothing saved yet.</div>
       </div>
     </details>
   </section>
 
   <section class="card visit" aria-label="Visit our shop">
     <div>
-      <h2>Visit our shop</h2>
+      <h2 data-i18n="visitShop">Visit our shop</h2>
       <h3>Arora Plastic Company</h3>
-      <p>Poly bags, courier bags and packaging · Sadar Bazaar, Delhi</p>
-      <p><b>Can't come to the shop?</b> We do home delivery. Message Vasu with your area.</p>
-      <p>Contact: <b>Vasu</b><br><a class="phone" href="tel:+919625364124">96253 64124</a></p>
+      <p data-i18n="shopDesc">Poly bags, courier bags and packaging · Sadar Bazaar, Delhi</p>
+      <p data-i18n="cantCome"><b>Can't come to the shop?</b> We do home delivery. Message Vasu with your area.</p>
+      <p><span data-i18n="contact">Contact:</span> <b>Vasu</b><br><a class="phone" href="tel:+919625364124">96253 64124</a></p>
       <div class="visit-actions">
-        <a class="btn" href="https://maps.app.goo.gl/f4fRcyAyXy6nwa7E6" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pin"/></svg>Get directions</a>
-        <a class="btn quiet" href="tel:+919625364124"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-phone"/></svg>Call</a>
+        <a class="btn" href="https://maps.app.goo.gl/f4fRcyAyXy6nwa7E6" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pin"/></svg><span data-i18n="directions">Get directions</span></a>
+        <a class="btn quiet" href="tel:+919625364124"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-phone"/></svg><span data-i18n="call">Call</span></a>
         <a class="btn wa js-wa" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp</a>
       </div>
     </div>
@@ -398,19 +444,19 @@
         <path d="M200 28c-19 0-34 15-34 34 0 26 34 62 34 62s34-36 34-62c0-19-15-34-34-34z" fill="var(--bad)"/>
         <circle cx="200" cy="62" r="12" fill="#fff"/>
       </svg>
-      <span class="map-label"><b>Arora Plastic Company</b><span>Sadar Bazaar, Delhi · Tap to open in Google Maps</span></span>
+      <span class="map-label"><b>Arora Plastic Company</b><span data-i18n="mapTap">Sadar Bazaar, Delhi · Tap to open in Google Maps</span></span>
     </a>
   </section>
 
-  <footer>Arora Plastic Company · Sadar Bazaar, Delhi · Vasu: <a href="tel:+919625364124">96253 64124</a> · <a href="https://maps.app.goo.gl/f4fRcyAyXy6nwa7E6" target="_blank" rel="noopener">Open in Google Maps</a></footer>
+  <footer>Arora Plastic Company · Sadar Bazaar, Delhi · Vasu: <a href="tel:+919625364124">96253 64124</a> · <a href="https://maps.app.goo.gl/f4fRcyAyXy6nwa7E6" target="_blank" rel="noopener"><span data-i18n="openMaps">Open in Google Maps</span></a></footer>
 </div>
 
-<a class="wa-float js-wa" href="#" target="_blank" rel="noopener" aria-label="Chat with Vasu on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg><span>Chat with Vasu</span></a>
+<a class="wa-float js-wa" href="#" target="_blank" rel="noopener" aria-label="Chat with Vasu on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg><span data-i18n="chatVasu">Chat with Vasu</span></a>
 
 <!-- phones: the answer stays on screen while you change the size -->
 <div class="pin" aria-label="Your bag size">
   <div class="pin-size"><b id="pin-size">–</b><small id="pin-sub">+ 2 inch flap</small></div>
-  <a class="btn wa" id="pin-order" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg>Order</a>
+  <a class="btn wa" id="pin-order" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg><span data-i18n="order">Order</span></a>
   <a class="btn quiet" href="tel:+919625364124" aria-label="Call Vasu"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-phone"/></svg></a>
 </div>
 
@@ -419,6 +465,8 @@
   <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.3-.5-.5-1-1.1-1.3-1.7-.1-.2 0-.4.1-.5l.4-.4.2-.4v-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.6.6-.9 1.3-.9 2.1 0 .9.4 1.8 1 2.5 1.1 1.5 2.4 2.7 4.1 3.4 1.6.7 2.2.6 2.6.5.6-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1l-.4-.2z"/></symbol>
   <symbol id="i-truck" viewBox="0 0 24 24"><path fill="currentColor" d="M3 5h11v3h3.6l3.4 4.2V17h-2.1a2.5 2.5 0 0 1-4.8 0H9.9a2.5 2.5 0 0 1-4.8 0H3V5zm11 5v3h5l-2.4-3H14zM7.5 16.2a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9.6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></symbol>
   <symbol id="i-add" viewBox="0 0 24 24"><path fill="currentColor" d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v16h10V4H7zm4 4h2v3h3v2h-3v3h-2v-3H8v-2h3V8z"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path fill="currentColor" d="M11 16V7.8L8.4 10.4 7 9l5-5 5 5-1.4 1.4L13 7.8V16h-2zm-6 4v-5h2v3h10v-3h2v5H5z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path fill="currentColor" d="M18 16a3 3 0 0 0-2.4 1.2l-6.7-3.4a3 3 0 0 0 0-1.6l6.7-3.4A3 3 0 1 0 15 7l-6.7 3.4a3 3 0 1 0 0 3.2L15 17a3 3 0 1 0 3-1z"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></symbol>
 </svg>
 
@@ -451,6 +499,59 @@ const COURIER = {
 };
 // ============================================================================
 
+const $ = id => document.getElementById(id);
+const store = { get(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? d; } catch (e) { return d; } },
+                set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } } };
+
+// ---- Hindi text (English lives in the page itself) ----------------------------
+const HI = {
+  brandSub: 'पॉली बैग और कूरियर बैग · सदर बाज़ार, दिल्ली · होम डिलीवरी',
+  callVasu: 'वासु को कॉल करें · 96253 64124',
+  h1: 'अपने प्रोडक्ट के लिए सही बैग साइज़ ढूँढने की कोई चिंता नहीं!',
+  lead: 'अपने प्रोडक्ट का साइज़ डालें, हम सेकंडों में सही पॉली बैग बता देंगे: न इतना टाइट कि सील न हो, न इतना बड़ा कि ढीला लगे।',
+  delivery: '<b>हम आपके घर तक डिलीवरी करते हैं।</b> WhatsApp पर ऑर्डर करें और बैग घर पर मँगवाएँ। अपने एरिया के बारे में वासु से पूछें।',
+  installBtn: 'होम स्क्रीन पर जोड़ें',
+  installHint: 'iPhone पर: Safari में <b>Share</b> (तीर वाला चौकोर बटन) दबाएँ, फिर <b>Add to Home Screen</b> चुनें।',
+  yourProduct: 'आपका प्रोडक्ट', length: 'लंबाई', breadth: 'चौड़ाई', height: 'ऊँचाई',
+  isClothing: 'क्या यह कपड़ा है?', clothingHint: 'कपड़े दब जाते हैं, इसलिए छोटे बैग में आ जाते हैं।', no: 'नहीं', yes: 'हाँ',
+  useThis: 'यह पॉली बैग लें', homeDelOrCall: 'होम डिलीवरी उपलब्ध · या वासु को कॉल करें:',
+  showCalc: 'हिसाब और एक्स्ट्रा जगह देखें', widthNeeded: 'ज़रूरी चौड़ाई', lengthNeeded: 'ज़रूरी लंबाई', spareRoom: 'बची जगह',
+  extraRoom: 'प्रोडक्ट के चारों ओर एक्स्ट्रा जगह',
+  roomNote: 'ज़्यादा जगह मतलब बड़ा बैग। बची हुई लंबाई प्रोडक्ट के ऊपर मुड़ जाती है और फ्लैप नीचे चिपकता है, जैसा पैकिंग की तस्वीर में दिखाया गया है।',
+  howPacks: 'आपका प्रोडक्ट कैसे पैक होगा', toScale: 'सही अनुपात में बना है। हर खाना 2 इंच का है।',
+  front: 'सामने से', side: 'साइड से: कैसे सील होता है', lgBag: 'पॉली बैग', lgFlap: '2 इंच का सीलिंग फ्लैप', lgProduct: 'आपका प्रोडक्ट',
+  shipCheck: 'शिपिंग चार्ज चेक', whereSell: 'आप कहाँ बेचते हैं?', ownSite: 'अपनी वेबसाइट', delivering: 'डिलीवरी',
+  withinCity: 'शहर के अंदर', acrossIndia: 'पूरे भारत में',
+  productWeight: 'प्रोडक्ट का वज़न', bagWeight: 'पॉली बैग का वज़न', packedWeight: 'पैक्ड वज़न', sizeWeight: 'साइज़ वाला वज़न',
+  mockTitle: 'आपके बैग पर आपका ब्रांड',
+  mockLead: 'अपना लोगो लगाएँ और देखें कि प्रिंटेड कूरियर बैग कैसा दिखेगा। आपका लोगो आपके फ़ोन में ही रहता है, कहीं अपलोड नहीं होता।',
+  chooseLogo: 'अपना लोगो चुनें', removeLogo: 'लोगो हटाएँ', brandName: 'या अपने ब्रांड का नाम लिखें', bagColour: 'बैग का रंग',
+  logoTip: 'टिप: बिना बैकग्राउंड वाला PNG लोगो सबसे अच्छा दिखता है, ख़ासकर गहरे रंग के बैग पर।',
+  askPrinted: 'प्रिंटेड बैग के बारे में वासु से पूछें', saveImage: 'तस्वीर सेव या शेयर करें',
+  mockFine: 'यह सिर्फ़ झलक है। प्रिंटिंग, कम से कम ऑर्डर और दाम के लिए वासु से पूछें।',
+  mySaved: 'मेरे सेव किए प्रोडक्ट', save: 'सेव करें', savesHere: 'ऊपर का साइज़ इसी फ़ोन या कंप्यूटर में सेव होता है।', nothingSaved: 'अभी कुछ सेव नहीं है।',
+  visitShop: 'हमारी दुकान पर आएँ', shopDesc: 'पॉली बैग, कूरियर बैग और पैकिंग का सामान · सदर बाज़ार, दिल्ली',
+  cantCome: '<b>दुकान नहीं आ सकते?</b> हम होम डिलीवरी करते हैं। अपना एरिया वासु को मैसेज करें।',
+  contact: 'संपर्क:', directions: 'रास्ता देखें', call: 'कॉल करें', mapTap: 'सदर बाज़ार, दिल्ली · Google Maps में खोलने के लिए टैप करें',
+  openMaps: 'Google Maps में खोलें', chatVasu: 'वासु से बात करें', order: 'ऑर्डर',
+  namePh: 'प्रोडक्ट का नाम, जैसे पुरुषों की टी-शर्ट L', brandPh: 'जैसे Kiara Fashions',
+};
+let lang = store.get('pb-lang', (navigator.language || '').toLowerCase().startsWith('hi') ? 'hi' : 'en');
+const t = (en, hi) => lang === 'hi' ? hi : en;
+function applyLang(l) {
+  lang = l === 'hi' ? 'hi' : 'en'; store.set('pb-lang', lang);
+  document.documentElement.lang = lang;
+  $('lang-en').setAttribute('aria-pressed', lang === 'en'); $('lang-hi').setAttribute('aria-pressed', lang === 'hi');
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    if (el.dataset.en === undefined) el.dataset.en = el.innerHTML;
+    el.innerHTML = lang === 'hi' && HI[el.dataset.i18n] ? HI[el.dataset.i18n] : el.dataset.en;
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    if (el.dataset.enPh === undefined) el.dataset.enPh = el.placeholder;
+    el.placeholder = lang === 'hi' && HI[el.dataset.i18nPh] ? HI[el.dataset.i18nPh] : el.dataset.enPh;
+  });
+}
+
 const IN = 2.54, FLAP = 2;
 const CLOSE = 1;     // cm of flat bag above the product so the flap folds over and seals
 const TIGHT = 0.5;   // inches: a fit with less spare than this is too tight, so the next size up is picked
@@ -458,11 +559,8 @@ const SOFT_H = 0.5;  // clothing squashes, so its height counts at half and tigh
 const BAGS = BAG_SIZES.map(b => [...b]).sort((a, b) => a[0] * a[1] - b[0] * b[1] || a[0] - b[0]);
 // the picture keeps one scale up to an 18 × 24 inch bag (so bags visibly grow and shrink), and zooms out only beyond that
 const REF_W = 18, REF_L = 24 + FLAP;
-const $ = id => document.getElementById(id);
 const f1 = n => (Math.round(n * 10) / 10).toString();
 const r2 = n => Math.round(n * 100) / 100;
-const store = { get(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? d; } catch (e) { return d; } },
-                set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } } };
 const state = { L: 30, B: 20, H: 5, M: 1.5, soft: false, unit: store.get('pb-unit', 'cm') === 'in' ? 'in' : 'cm' };
 
 // ---- sizing ---------------------------------------------------------------
@@ -505,9 +603,9 @@ function draw(v) {
     <rect x="${x0}" y="${y0 + bf}" width="${bw}" height="${bl}" rx="4" fill="var(--bag)" stroke="var(--bag-edge)" stroke-width="2"/>
     <rect x="${x0}" y="${y0}" width="${bw}" height="${bf}" rx="4" fill="var(--flap)" stroke="var(--bag-edge)" stroke-width="2"/>
     <line x1="${x0 + 6}" x2="${x0 + bw - 6}" y1="${y0 + bf * .55}" y2="${y0 + bf * .55}" stroke="var(--bag-edge)" stroke-dasharray="5 4"/>
-    <text x="${x0 + bw / 2}" y="${y0 + bf * .55 - 5}" text-anchor="middle">2 in flap</text>
+    <text x="${x0 + bw / 2}" y="${y0 + bf * .55 - 5}" text-anchor="middle">${t('2 in flap', '2 इंच फ्लैप')}</text>
     <rect x="${px}" y="${py}" width="${pw}" height="${pl}" rx="3" fill="var(--product)" stroke="var(--product-edge)" stroke-width="2"/>
-    ${pl > 40 && pw > 130 ? `<text x="${px + pw / 2}" y="${py + pl / 2 + 4}" text-anchor="middle" font-weight="600">Your product</text>` : ''}
+    ${pl > 40 && pw > 130 ? `<text x="${px + pw / 2}" y="${py + pl / 2 + 4}" text-anchor="middle" font-weight="600">${t('Your product', 'आपका प्रोडक्ट')}</text>` : ''}
     <line class="dim" x1="${x0}" x2="${x0 + bw}" y1="${y0 + bf + bl + 18}" y2="${y0 + bf + bl + 18}"/>
     <line class="dim" x1="${x0}" x2="${x0}" y1="${y0 + bf + bl + 12}" y2="${y0 + bf + bl + 24}"/>
     <line class="dim" x1="${x0 + bw}" x2="${x0 + bw}" y1="${y0 + bf + bl + 12}" y2="${y0 + bf + bl + 24}"/>
@@ -517,24 +615,24 @@ function draw(v) {
     <line class="dim" x1="${x0 - 22}" x2="${x0 - 10}" y1="${y0 + bf + bl}" y2="${y0 + bf + bl}"/>
     <text class="dimtxt" transform="translate(${x0 - 24} ${y0 + bf + bl / 2}) rotate(-90)" text-anchor="middle">${f1(v.BL)} in</text>
     ${foldY - (y0 + bf) > 8 ? `<line x1="${x0}" x2="${x0 + bw}" y1="${foldY}" y2="${foldY}" stroke="var(--bag-edge)" stroke-width="2" stroke-dasharray="8 6"/>
-      <text x="${x0 + bw - 8}" y="${foldY - 7}" text-anchor="end" class="dimtxt">folds here ↓</text>` : ''}`;
+      <text x="${x0 + bw - 8}" y="${foldY - 7}" text-anchor="end" class="dimtxt">${t('folds here ↓', 'यहाँ मुड़ेगा ↓')}</text>` : ''}`;
   drawSide(v, k, y0 + bf + bl, y0 + bf, bf, pl);
 }
 // Side view: product edge-on. The bag pinches to a seam below it and closes flat above it; any spare
 // length (from extra room or a bigger bag) folds down over the front, so the sticky flap lands lower down.
 function drawSide(v, k, yBottom, yMouth, bf, pl) {
-  const t = v.ph * k, SW = Math.max(160, t + 120), cx = SW / 2 + 12;
-  const boxB = yBottom - t / 2, boxT = boxB - pl, apex = boxT - t / 2;
-  const short = yMouth > apex + 0.5;                    // bag too short: the mouth can't close
-  const open = short ? Math.min(t / 2, yMouth - apex) : 0;
+  const th = v.ph * k, SW = Math.max(160, th + 120), cx = SW / 2 + 12;
+  const boxB = yBottom - th / 2, boxT = boxB - pl, apex = boxT - th / 2;
+  const short = yMouth > apex + 0.5;                    // bag too short: the mouth can'th close
+  const open = short ? Math.min(th / 2, yMouth - apex) : 0;
   const top = (short ? yMouth - bf : apex) - 34, h = yBottom + 26 - top;
-  const panel = s => `M ${cx} ${yBottom} L ${cx + s * t / 2} ${boxB} L ${cx + s * t / 2} ${boxT} L ${cx + s * open} ${short ? yMouth : apex}` + (short ? ` L ${cx + s * open} ${yMouth}` : '');
+  const panel = s => `M ${cx} ${yBottom} L ${cx + s * th / 2} ${boxB} L ${cx + s * th / 2} ${boxT} L ${cx + s * open} ${short ? yMouth : apex}` + (short ? ` L ${cx + s * open} ${yMouth}` : '');
   let fold = '', flap, flapMid = null;
   if (short) {
     flap = `M ${cx + open} ${yMouth} L ${cx + open} ${yMouth - bf}`;
   } else {
     // the closed top (spare length, then the flap) lies along the front: down the slope, then down the face
-    const g = 5, route = [[cx, apex], [cx - t / 2 - g, boxT], [cx - t / 2 - g, boxB], [cx - t / 2 - g, yBottom + 20]];
+    const g = 5, route = [[cx, apex], [cx - th / 2 - g, boxT], [cx - th / 2 - g, boxB], [cx - th / 2 - g, yBottom + 20]];
     const spare = apex - yMouth;
     const cut = (from, to) => {                          // the part of the route between two distances along it
       const out = []; let d = 0;
@@ -559,14 +657,14 @@ function drawSide(v, k, yBottom, yMouth, bf, pl) {
   const ok = short ? 'var(--bad)' : 'var(--ok)';
   $('side').setAttribute('viewBox', `0 ${top} ${SW} ${h}`);
   $('side').innerHTML = `
-    <rect x="${cx - t / 2}" y="${boxT}" width="${t}" height="${pl}" rx="2" fill="var(--product)" stroke="var(--product-edge)" stroke-width="2"/>
+    <rect x="${cx - th / 2}" y="${boxT}" width="${th}" height="${pl}" rx="2" fill="var(--product)" stroke="var(--product-edge)" stroke-width="2"/>
     <path d="${panel(1)}" fill="none" stroke="var(--bag-edge)" stroke-width="2.5" stroke-linejoin="round"/>
     <path d="${panel(-1)}" fill="none" stroke="var(--bag-edge)" stroke-width="2.5" stroke-linejoin="round"/>
     ${fold ? `<path d="${fold}" fill="none" stroke="var(--bag-edge)" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>` : ''}
     <path d="${flap}" fill="none" stroke="${ok}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-    ${flapMid ? `<text x="${flapMid[0] - 8}" y="${flapMid[1] + 4}" text-anchor="end" class="dimtxt" style="fill:var(--ok);font-weight:600">flap</text>` : ''}
-    <text x="${cx}" y="${top + 18}" text-anchor="middle" style="fill:${ok};font-weight:600">${short ? "won't close" : 'sealed'}</text>
-    <text x="${cx}" y="${yBottom + 18}" text-anchor="middle" class="dimtxt">bottom</text>`;
+    ${flapMid ? `<text x="${flapMid[0] - 8}" y="${flapMid[1] + 4}" text-anchor="end" class="dimtxt" style="fill:var(--ok);font-weight:600">${t('flap', 'फ्लैप')}</text>` : ''}
+    <text x="${cx}" y="${top + 18}" text-anchor="middle" style="fill:${ok};font-weight:600">${short ? t("won'th close", 'सील नहीं होगा') : t('sealed', 'सील')}</text>
+    <text x="${cx}" y="${yBottom + 18}" text-anchor="middle" class="dimtxt">${t('bottom', 'नीचे')}</text>`;
 }
 function animate() {
   if (!shown || reduceMotion) shown = { ...goal.v };
@@ -590,19 +688,19 @@ function update() {
   $('tight').hidden = true;
   if (best) {
     const [w, l] = best.bag;
-    $('out-size').textContent = `${w} × ${l} inch`;
-    $('out-sub').textContent = `+ 2 inch sealing flap · ${f1(w * IN)} × ${f1(l * IN)} cm` + (best.turned ? ' · put the product in sideways' : '');
-    if (tight) { $('tight').hidden = false; $('tight').textContent = `${tight.bag[0]} × ${tight.bag[1]} is too tight, so we picked ${w} × ${l}.`; }
-    else if (tightOnly) { $('tight').hidden = false; $('tight').textContent = 'This is a tight fit. Pack one to test before ordering in bulk.'; }
-    $('r-spare').textContent = `${f1(w - n.w)} in wide · ${f1(l - n.l)} in long`;
+    $('out-size').textContent = `${w} × ${l} ${t('inch', 'इंच')}`;
+    $('out-sub').textContent = `${t('+ 2 inch sealing flap', '+ 2 इंच का सीलिंग फ्लैप')} · ${f1(w * IN)} × ${f1(l * IN)} cm` + (best.turned ? t(' · put the product in sideways', ' · प्रोडक्ट को आड़ा रखें') : '');
+    if (tight) { $('tight').hidden = false; $('tight').textContent = t(`${tight.bag[0]} × ${tight.bag[1]} is too tight, so we picked ${w} × ${l}.`, `${tight.bag[0]} × ${tight.bag[1]} बहुत टाइट है, इसलिए हमने ${w} × ${l} चुना।`); }
+    else if (tightOnly) { $('tight').hidden = false; $('tight').textContent = t('This is a tight fit. Pack one to test before ordering in bulk.', 'यह टाइट फ़िट है। ज़्यादा ऑर्डर से पहले एक पैक करके देख लें।'); }
+    $('r-spare').textContent = t(`${f1(w - n.w)} in wide · ${f1(l - n.l)} in long`, `चौड़ाई में ${f1(w - n.w)} इंच · लंबाई में ${f1(l - n.l)} इंच`);
     $('pin-size').textContent = `${w} × ${l} in`;
-    $('pin-sub').textContent = '+ 2 inch flap';
+    $('pin-sub').textContent = t('+ 2 inch flap', '+ 2 इंच फ्लैप');
   } else {
-    $('out-size').textContent = 'Too big for our standard bags';
-    $('out-sub').textContent = `Needs at least ${f1(n.w)} × ${f1(n.l)} inch. Ask Vasu about a custom size.`;
+    $('out-size').textContent = t('Too big for our standard bags', 'हमारे स्टैंडर्ड बैग से बड़ा है');
+    $('out-sub').textContent = t(`Needs at least ${f1(n.w)} × ${f1(n.l)} inch. Ask Vasu about a custom size.`, `कम से कम ${f1(n.w)} × ${f1(n.l)} इंच चाहिए। कस्टम साइज़ के लिए वासु से पूछें।`);
     $('r-spare').textContent = '–';
-    $('pin-size').textContent = 'Custom size';
-    $('pin-sub').textContent = 'ask Vasu';
+    $('pin-size').textContent = t('Custom size', 'कस्टम साइज़');
+    $('pin-sub').textContent = t('ask Vasu', 'वासु से पूछें');
   }
   const hTxt = state.soft ? `½×${f1(state.H)}` : f1(H);
   $('r-nw').textContent = `${f1(n.across)} + ${hTxt} + ${f1(state.M)} = ${f1(n.w * IN)} cm (${f1(n.w)} in)`;
@@ -615,10 +713,11 @@ function update() {
     ? `Hi Vasu, I need poly bags of size ${best.bag[0]} × ${best.bag[1]} inch (+ 2 inch flap) from Arora Plastic Company.\nProduct: ${product}\nQuantity: \nI sell on: ${CHANNELS[channel]}\nHome delivery to (area / pincode): `
     : `Hi Vasu, I need a custom poly bag of at least ${f1(n.w)} × ${f1(n.l)} inch (+ 2 inch flap).\nProduct: ${product}\nQuantity: \nI sell on: ${CHANNELS[channel]}\nHome delivery to (area / pincode): `;
   $('order-wa').href = $('pin-order').href = waLink(msg);
-  $('order-label').textContent = best ? `Order ${best.bag[0]} × ${best.bag[1]} bags on WhatsApp` : 'Ask for a custom size on WhatsApp';
+  $('order-label').textContent = best ? t(`Order ${best.bag[0]} × ${best.bag[1]} bags on WhatsApp`, `${best.bag[0]} × ${best.bag[1]} बैग WhatsApp पर ऑर्डर करें`) : t('Ask for a custom size on WhatsApp', 'कस्टम साइज़ WhatsApp पर पूछें');
 
   renderProducts();
   renderCourier(H, best);
+  drawMockup(best);
   trackResult(best);
   requestAnimationFrame(animate);
 }
@@ -626,7 +725,8 @@ function update() {
 // ---- shipping charge check -------------------------------------------------------
 // Meesho bills shipping by packed weight. Amazon, Flipkart and couriers bill the higher of packed weight and
 // size weight (L × B × H in cm ÷ 5000). All of them bill in weight slabs, so every gram near a slab edge counts.
-const CHANNELS = { meesho: 'Meesho', amazon: 'Amazon', flipkart: 'Flipkart', website: 'my own website' };
+const CHANNELS = { meesho: 'Meesho', amazon: 'Amazon', flipkart: 'Flipkart', website: 'my own website' };  // English: used in WhatsApp messages
+const channelName = c => c === 'website' ? t('your own website', 'अपनी वेबसाइट') : CHANNELS[c];
 let channel = store.get('pb-channel', 'meesho'); if (!CHANNELS[channel]) channel = 'meesho';
 let zone = 'city';
 const rupees = n => '₹' + Math.round(n).toLocaleString('en-IN');
@@ -644,10 +744,10 @@ function renderCourier(H, best) {
   const billG = hasWeight ? Math.max(packedG, bySize ? volG : 0) : (bySize ? volG : NaN);
   const slabs = isFinite(billG) ? Math.max(1, Math.ceil(billG / slab - 1e-9)) : 0;
   const slabG = slabs * slab, spare = slabG - billG, over = billG - (slabs - 1) * slab;
-  const name = CHANNELS[channel];
+  const name = channelName(channel);
   document.querySelectorAll('#channels button').forEach(bt => bt.setAttribute('aria-pressed', bt.dataset.ch === channel));
   $('zone-row').hidden = channel !== 'website';
-  $('c-micron').textContent = `(about, ${BAG_MICRON} micron)`;
+  $('c-micron').textContent = t(`(about, ${BAG_MICRON} micron)`, `(लगभग, ${BAG_MICRON} माइक्रॉन)`);
   $('c-bagwt').textContent = best ? `${Math.round(bagG)} g` : '–';
   $('c-packed').textContent = hasWeight ? `${Math.round(packedG)} g` : '–';
   $('c-vol').textContent = grams(volG);
@@ -656,37 +756,41 @@ function renderCourier(H, best) {
 
   if (channel === 'website') {
     const z = COURIER[zone];
-    $('c-lead').textContent = 'What one parcel costs with a courier aggregator, based on published rates.';
-    $('c-label').textContent = 'As low as';
+    const zl = zone === 'city' ? t(z.label, 'शहर के अंदर') : t(z.label, 'पूरे भारत में');
+    $('c-lead').textContent = t('What one parcel costs with a courier aggregator, based on published rates.', 'कूरियर एग्रीगेटर से एक पार्सल का खर्च, पब्लिश्ड रेट के आधार पर।');
+    $('c-label').textContent = t('As low as', 'कम से कम');
     big.textContent = rupees(z.low * slabs);
-    $('c-sub').textContent = `Many small sellers pay ${rupees(z.high * slabs)} for this parcel ${z.label}. Charged as ${grams(slabG)}.`;
-    $('c-fine').textContent = `Per parcel, before 18% GST and fuel surcharge (about 10–12%). Based on published courier rate cards, updated ${COURIER.updated}. Your actual rate depends on the courier, the pincode and how many parcels you send each month.`;
+    $('c-sub').textContent = t(`Many small sellers pay ${rupees(z.high * slabs)} for this parcel ${zl}. Charged as ${grams(slabG)}.`,
+                               `कई छोटे सेलर ${zl} इस पार्सल के लिए ${rupees(z.high * slabs)} देते हैं। ${grams(slabG)} के हिसाब से चार्ज।`);
+    $('c-fine').textContent = t(`Per parcel, before 18% GST and fuel surcharge (about 10–12%). Based on published courier rate cards, updated ${COURIER.updated}. Your actual rate depends on the courier, the pincode and how many parcels you send each month.`,
+                                `प्रति पार्सल, 18% GST और फ्यूल सरचार्ज (लगभग 10–12%) से पहले। पब्लिश्ड कूरियर रेट कार्ड पर आधारित, अपडेट: ${COURIER.updated}। आपका असली रेट कूरियर, पिनकोड और महीने के पार्सल की संख्या पर निर्भर करता है।`);
   } else {
     $('c-lead').textContent = channel === 'meesho'
-      ? 'Meesho charges shipping by packed weight. Stay in a lower slab and you pay less on every order.'
-      : `${name} charges shipping by weight slab, and can charge big, light parcels by size instead.`;
-    $('c-label').textContent = `Your ${name} weight slab`;
+      ? t('Meesho charges shipping by packed weight. Stay in a lower slab and you pay less on every order.', 'Meesho पैक्ड वज़न के हिसाब से शिपिंग चार्ज लेता है। कम स्लैब में रहें, हर ऑर्डर पर कम पैसे दें।')
+      : t(`${name} charges shipping by weight slab, and can charge big, light parcels by size instead.`, `${name} वज़न स्लैब के हिसाब से चार्ज लेता है, और बड़े हल्के पार्सल पर साइज़ के हिसाब से भी।`);
+    $('c-label').textContent = t(`Your ${name} weight slab`, `आपका ${name} वज़न स्लैब`);
     if (!isFinite(billG) || !hasWeight && !bySize) {
-      big.classList.add('ask'); big.textContent = 'Add your product weight';
-      $('c-sub').textContent = 'Type it in grams to see your slab and how much room you have left.';
+      big.classList.add('ask'); big.textContent = t('Add your product weight', 'प्रोडक्ट का वज़न डालें');
+      $('c-sub').textContent = t('Type it in grams to see your slab and how much room you have left.', 'ग्राम में डालें, अपना स्लैब और बची जगह देखें।');
     } else {
-      big.textContent = `up to ${grams(slabG)}`;
+      big.textContent = t(`up to ${grams(slabG)}`, `${grams(slabG)} तक`);
       $('c-sub').textContent = hasWeight
-        ? `${Math.round(spare)} g to spare before the next slab.`
-        : 'Based on size only. Add the weight to check.';
+        ? t(`${Math.round(spare)} g to spare before the next slab.`, `अगले स्लैब से पहले ${Math.round(spare)} g बचे हैं।`)
+        : t('Based on size only. Add the weight to check.', 'सिर्फ़ साइज़ के हिसाब से। पक्का करने के लिए वज़न डालें।');
     }
-    $('c-fine').textContent = `${name} sets the exact shipping fee from your weight slab and the delivery zone; check your seller panel for the rupee amount. Slabs shown in ${slab} g steps. Bag weight is an estimate for a ${BAG_MICRON} micron bag.`;
+    $('c-fine').textContent = t(`${name} sets the exact shipping fee from your weight slab and the delivery zone; check your seller panel for the rupee amount. Slabs shown in ${slab} g steps. Bag weight is an estimate for a ${BAG_MICRON} micron bag.`,
+                                `${name} आपके वज़न स्लैब और डिलीवरी ज़ोन से शिपिंग फ़ीस तय करता है; रुपये में रकम अपने सेलर पैनल में देखें। स्लैब ${slab} g के हिसाब से। बैग का वज़न ${BAG_MICRON} माइक्रॉन बैग का अनुमान है।`);
   }
   // tips that save money on every parcel
   if (slabs > 1 && over <= 100) {
     tip.hidden = false;
-    tip.textContent = `You're just ${Math.round(over)} g over ${grams(slabG - slab)}, so you're charged for ${grams(slabG)}. A lighter or smaller pack would drop you a slab and save on every order.`;
+    tip.textContent = t(`You're just ${Math.round(over)} g over ${grams(slabG - slab)}, so you're charged for ${grams(slabG)}. A lighter or smaller pack would drop you a slab and save on every order.`, `आप ${grams(slabG - slab)} से सिर्फ़ ${Math.round(over)} g ऊपर हैं, इसलिए ${grams(slabG)} का चार्ज लगेगा। थोड़ा हल्का या छोटा पैक करने से एक स्लैब कम होगा और हर ऑर्डर पर बचत होगी।`);
   } else if (hasWeight && spare < 40) {
     tip.hidden = false;
-    tip.textContent = `Careful: only ${Math.round(spare)} g to spare. A heavier bag or extra packing would push this into the ${grams(slabG + slab)} slab.`;
+    tip.textContent = t(`Careful: only ${Math.round(spare)} g to spare. A heavier bag or extra packing would push this into the ${grams(slabG + slab)} slab.`, `ध्यान दें: सिर्फ़ ${Math.round(spare)} g बचे हैं। भारी बैग या ज़्यादा पैकिंग से यह ${grams(slabG + slab)} वाले स्लैब में चला जाएगा।`);
   } else if (bySize && volG > slab && (!hasWeight || volG > packedG)) {
     tip.hidden = false;
-    tip.textContent = `This parcel is charged for its size, not its weight. A flatter pack (less height) brings it down.`;
+    tip.textContent = t('This parcel is charged for its size, not its weight. A flatter pack (less height) brings it down.', 'यह पार्सल वज़न नहीं, साइज़ के हिसाब से चार्ज हो रहा है। चपटा पैक (कम ऊँचाई) करने से चार्ज कम होगा।');
   }
 }
 $('channels').addEventListener('click', e => {
@@ -721,7 +825,7 @@ document.addEventListener('click', e => {
   const el = e.target.closest('a, button'); if (!el) return;
   const href = el.getAttribute('href') || '';
   if (href.startsWith('tel:')) track('call_vasu');
-  else if (href.includes('wa.me')) track(el.id === 'order-wa' || el.id === 'pin-order' ? 'order_whatsapp' : 'chat_whatsapp', { bag_size: lastResult });
+  else if (href.includes('wa.me')) track(el.id === 'print-wa' ? 'print_enquiry' : el.id === 'order-wa' || el.id === 'pin-order' ? 'order_whatsapp' : 'chat_whatsapp', { bag_size: lastResult });
   else if (href.includes('maps.app.goo.gl')) track('directions');
 });
 
@@ -767,14 +871,14 @@ const sortProducts = () => products.sort((a, b) => b.updatedAt - a.updatedAt);
 function status(text, kind = '') { $('save-status').textContent = text; $('save-status').className = 'status ' + kind; }
 $('save-btn').addEventListener('click', () => {
   const name = $('pname').value.trim();
-  if (!name) { status('Type a name for this product first.', 'bad'); $('pname').focus(); return; }
+  if (!name) { status(t('Type a name for this product first.', 'पहले इस प्रोडक्ट का नाम लिखें।'), 'bad'); $('pname').focus(); return; }
   const body = { name, L: state.L, B: state.B, H: state.H, M: state.M, soft: state.soft, updatedAt: Date.now() };
   const existing = products.find(p => String(p.name).toLowerCase() === name.toLowerCase());  // same name updates it
   if (existing) Object.assign(existing, body); else products.push({ id: 'p' + Date.now().toString(36), ...body });
   activeId = (existing || products[products.length - 1]).id;
   sortProducts();
-  if (store.set('pb-products', products)) status(existing ? `Updated "${name}".` : `Saved "${name}".`, 'ok');
-  else status("Couldn't save: this browser is blocking storage (private mode?).", 'bad');
+  if (store.set('pb-products', products)) status(existing ? t(`Updated "${name}".`, `"${name}" अपडेट हुआ।`) : t(`Saved "${name}".`, `"${name}" सेव हुआ।`), 'ok');
+  else status(t("Couldn't save: this browser is blocking storage (private mode?).", 'सेव नहीं हुआ: यह ब्राउज़र स्टोरेज रोक रहा है (प्राइवेट मोड?)।'), 'bad');
   renderProducts();
 });
 $('pname').addEventListener('keydown', e => { if (e.key === 'Enter') $('save-btn').click(); });
@@ -788,25 +892,25 @@ function renderProducts() {
     const c = choose({ L: +p.L, B: +p.B, H: +p.H, M: +(p.M ?? 1.5), soft: !!p.soft });
     const li = document.createElement('li'); if (p.id === activeId) li.className = 'active';
     const nm = document.createElement('div'); nm.className = 'pn'; nm.textContent = p.name;
-    if (p.soft) { const s = document.createElement('span'); s.className = 'pill'; s.textContent = 'clothing'; nm.append(s); }
+    if (p.soft) { const s = document.createElement('span'); s.className = 'pill'; s.textContent = t('clothing', 'कपड़ा'); nm.append(s); }
     const d = document.createElement('div'); d.className = 'pd';
     d.append(`${f1(p.L)} × ${f1(p.B)} × ${f1(p.H)} cm → `);
-    const b = document.createElement('b'); b.textContent = c.best ? `${c.best.bag[0]} × ${c.best.bag[1]} in` : 'custom'; d.append(b);
+    const b = document.createElement('b'); b.textContent = c.best ? `${c.best.bag[0]} × ${c.best.bag[1]} in` : t('custom', 'कस्टम'); d.append(b);
     const acts = document.createElement('div'); acts.className = 'acts';
-    const open = document.createElement('button'); open.type = 'button'; open.className = 'btn quiet small'; open.textContent = 'Open';
+    const open = document.createElement('button'); open.type = 'button'; open.className = 'btn quiet small'; open.textContent = t('Open', 'खोलें');
     open.onclick = () => {
       activeId = p.id; $('pname').value = p.name; setSoft(p.soft); state.M = +(p.M ?? 1.5); $('M-n').value = state.M;
       set('L', p.L); set('B', p.B); set('H', p.H);
-      status(`Opened "${p.name}".`, 'ok'); window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+      status(t(`Opened "${p.name}".`, `"${p.name}" खोला।`), 'ok'); window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
     };
     const del = document.createElement('button'); del.type = 'button';
     const confirming = pendingDelete === p.id;
     del.className = confirming ? 'btn danger small' : 'btn quiet small';
-    del.textContent = confirming ? 'Sure?' : 'Delete';
+    del.textContent = confirming ? t('Sure?', 'पक्का?') : t('Delete', 'हटाएँ');
     del.onclick = () => {
       if (pendingDelete === p.id) {
         pendingDelete = null; products = products.filter(x => x.id !== p.id); store.set('pb-products', products);
-        status(`Deleted "${p.name}".`, 'ok'); renderProducts();
+        status(t(`Deleted "${p.name}".`, `"${p.name}" हटाया।`), 'ok'); renderProducts();
       } else { pendingDelete = p.id; renderProducts(); setTimeout(() => { if (pendingDelete === p.id) { pendingDelete = null; renderProducts(); } }, 4000); }
     };
     acts.append(open, del);
@@ -814,6 +918,110 @@ function renderProducts() {
     list.append(li);
   }
 }
+
+// ---- your brand on your bag (all drawn on the person's own phone; nothing is uploaded) --
+const BAG_COLOURS = [['White', 'सफ़ेद', '#f6f7f9'], ['Grey', 'ग्रे', '#a3a8b0'], ['Black', 'काला', '#1f2125'], ['Pink', 'गुलाबी', '#f3a6c4'], ['Blue', 'नीला', '#2f5fd0']];
+let bagColour = store.get('pb-bagcolour', 0); if (!BAG_COLOURS[bagColour]) bagColour = 0;
+let logoImg = null, lastBest = null;
+const isDark = hex => { const n = parseInt(hex.slice(1), 16); return ((n >> 16) * 299 + ((n >> 8) & 255) * 587 + (n & 255) * 114) / 1000 < 140; };
+function renderSwatches() {
+  $('swatches').replaceChildren(...BAG_COLOURS.map(([en, hi, hex], i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.style.background = hex;
+    b.setAttribute('aria-label', t(en, hi)); b.title = t(en, hi); b.setAttribute('aria-pressed', i === bagColour);
+    b.onclick = () => { bagColour = i; store.set('pb-bagcolour', i); renderSwatches(); drawMockup(lastBest); };
+    return b;
+  }));
+}
+function roundRect(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function drawMockup(best) {
+  lastBest = best;
+  const cv = $('mock'); if (!cv) return;
+  const ctx = cv.getContext('2d'), CW = cv.width, CH = cv.height;
+  const [bw, bl] = best ? best.bag : [12, 16];
+  const hex = BAG_COLOURS[bagColour][2], dark = isDark(hex);
+  ctx.clearRect(0, 0, CW, CH);
+  ctx.fillStyle = '#eef1f5'; ctx.fillRect(0, 0, CW, CH);
+  // bag size on the canvas, keeping its real proportions
+  const maxW = CW - 140, maxH = CH - 190, k = Math.min(maxW / bw, maxH / (bl + FLAP));
+  const W = bw * k, L = bl * k, F = FLAP * k, x = (CW - W) / 2, y = 40;
+  ctx.save(); ctx.shadowColor = 'rgba(20,30,50,.25)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 10;
+  ctx.fillStyle = hex; roundRect(ctx, x, y + F, W, L, 10); ctx.fill(); ctx.restore();
+  const sheen = ctx.createLinearGradient(x, 0, x + W, 0);
+  const gl = dark ? .07 : .18;  // soft shine: subtler on dark bags
+  sheen.addColorStop(0, `rgba(255,255,255,${gl})`); sheen.addColorStop(.5, 'rgba(255,255,255,0)'); sheen.addColorStop(1, 'rgba(0,0,0,.08)');
+  ctx.fillStyle = sheen; roundRect(ctx, x, y + F, W, L, 10); ctx.fill();
+  // flap with the peel-off strip
+  ctx.fillStyle = hex; roundRect(ctx, x, y, W, F + 6, 8); ctx.fill();
+  ctx.fillStyle = 'rgba(0,0,0,.10)'; roundRect(ctx, x, y, W, F + 6, 8); ctx.fill();
+  ctx.fillStyle = dark ? 'rgba(255,255,255,.35)' : 'rgba(255,255,255,.85)'; ctx.fillRect(x + 14, y + F * .3, W - 28, F * .4);
+  ctx.strokeStyle = 'rgba(0,0,0,.18)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, y + F + 6); ctx.lineTo(x + W, y + F + 6); ctx.stroke();
+  // logo, brand name, or an empty slot
+  const ink = dark ? '#ffffff' : '#18202e';
+  const boxW = W * .62, boxH = L * .38, cx = x + W / 2, cy = y + F + L * .38;
+  const brand = $('brand-in').value.trim();
+  if (logoImg) {
+    const s = Math.min(boxW / logoImg.width, boxH / logoImg.height);
+    ctx.drawImage(logoImg, cx - logoImg.width * s / 2, cy - logoImg.height * s / 2, logoImg.width * s, logoImg.height * s);
+  } else if (brand) {
+    let size = 64; ctx.font = `800 ${size}px Archivo, "Noto Sans Devanagari", Arial, sans-serif`;
+    while (ctx.measureText(brand).width > boxW && size > 16) { size -= 2; ctx.font = `800 ${size}px Archivo, "Noto Sans Devanagari", Arial, sans-serif`; }
+    ctx.fillStyle = ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(brand, cx, cy);
+  } else {
+    ctx.setLineDash([10, 8]); ctx.strokeStyle = dark ? 'rgba(255,255,255,.6)' : 'rgba(24,32,46,.45)'; ctx.lineWidth = 3;
+    roundRect(ctx, cx - boxW / 2, cy - boxH / 2, boxW, boxH, 12); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = dark ? 'rgba(255,255,255,.8)' : 'rgba(24,32,46,.6)'; ctx.font = '600 22px "IBM Plex Sans", "Noto Sans Devanagari", Arial, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(t('Your logo here', 'आपका लोगो यहाँ'), cx, cy);
+  }
+  // size and credit underneath (stays on saved images)
+  ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = '#18202e'; ctx.font = '800 26px Archivo, "Noto Sans Devanagari", Arial, sans-serif';
+  ctx.fillText(`${bw} × ${bl} ${t('inch', 'इंच')} + 2 ${t('inch flap', 'इंच फ्लैप')}`, CW / 2, y + F + L + 56);
+  ctx.fillStyle = '#5d6779'; ctx.font = '500 18px "IBM Plex Sans", "Noto Sans Devanagari", Arial, sans-serif';
+  ctx.fillText('Arora Plastic Company · Sadar Bazaar, Delhi · 96253 64124', CW / 2, CH - 26);
+  // the enquiry message carries the choices
+  const msg = `Hi Vasu, I'm interested in custom printed poly bags with my ${logoImg ? 'logo' : 'brand name'}${brand && !logoImg ? ` ("${brand}")` : ''}.\nBag size: ${bw} × ${bl} inch (+ 2 inch flap)\nBag colour: ${BAG_COLOURS[bagColour][0]}\nQuantity: \nI sell on: ${CHANNELS[channel]}\nI'll share my logo file here.`;
+  $('print-wa').href = waLink(msg);
+}
+function useLogo(dataUrl, save) {
+  const img = new Image();
+  img.onload = () => {
+    // keep it small: phones store at most a few MB per site
+    const max = 600, s = Math.min(1, max / Math.max(img.width, img.height));
+    const c = document.createElement('canvas'); c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    logoImg = c; $('logo-clear').hidden = false;
+    if (save) store.set('pb-logo', c.toDataURL('image/png'));
+    drawMockup(lastBest);
+  };
+  img.src = dataUrl;
+}
+$('logo-in').addEventListener('change', e => {
+  const f = e.target.files && e.target.files[0]; if (!f) return;
+  const r = new FileReader(); r.onload = () => { useLogo(r.result, true); track('logo_added'); }; r.readAsDataURL(f);
+  e.target.value = '';
+});
+$('logo-clear').addEventListener('click', () => { logoImg = null; $('logo-clear').hidden = true; try { localStorage.removeItem('pb-logo'); } catch (e) {} drawMockup(lastBest); });
+$('brand-in').addEventListener('input', () => { store.set('pb-brand', $('brand-in').value); drawMockup(lastBest); });
+$('mock-save').addEventListener('click', () => {
+  $('mock').toBlob(async blob => {
+    if (!blob) return;
+    track('mockup_saved');
+    const file = new File([blob], 'my-bag-design.png', { type: 'image/png' });
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: t('My bag design', 'मेरा बैग डिज़ाइन') }); return; }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'my-bag-design.png';
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }, 'image/png');
+});
+$('brand-in').value = store.get('pb-brand', '');
+{ const saved = store.get('pb-logo', null); if (saved) useLogo(saved, false); }
+
+// ---- language switch -----------------------------------------------------------
+$('lang-en').addEventListener('click', () => { applyLang('en'); renderSwatches(); update(); track('language', { lang: 'en' }); });
+$('lang-hi').addEventListener('click', () => { applyLang('hi'); renderSwatches(); update(); track('language', { lang: 'hi' }); });
+applyLang(lang);
+renderSwatches();
 
 // ---- start --------------------------------------------------------------------
 sortProducts();
